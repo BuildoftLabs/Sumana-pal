@@ -14,7 +14,11 @@ export default function Treat({ data }) {
           {data.cards.map((card) => (
             <article className="treat-card" role="listitem" key={card.title}>
               <div className="treat-icon" aria-hidden="true">
-                {card.icon}
+                {card.iconUrl ? (
+                  <img className="treat-icon-img" src={card.iconUrl} alt="" loading="lazy" />
+                ) : (
+                  card.icon
+                )}
               </div>
               <h3 className="treat-card-title">{card.title}</h3>
             </article>

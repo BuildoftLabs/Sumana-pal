@@ -1,4 +1,18 @@
+import { useEffect, useState } from "react";
+
+const heroTitles = ["Dietitian", "Nutritionist", "Diet Expert", "Nutritional Therapist"];
+
 export default function Hero() {
+  const [titleIndex, setTitleIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setTitleIndex((currentIndex) => (currentIndex + 1) % heroTitles.length);
+    }, 1800);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
   return (
     <section className="hero" aria-label="Introduction section">
       <img
@@ -12,7 +26,11 @@ export default function Hero() {
 
       <div className="hero-content">
         <p className="hero-eyebrow">SUMANA PAL ROY</p>
-        <h1 className="hero-title">Dietitian</h1>
+        <h1 className="hero-title" aria-live="polite">
+          <span key={heroTitles[titleIndex]} className="hero-title-text">
+            {heroTitles[titleIndex]}
+          </span>
+        </h1>
 
         <div className="hero-actions">
           <a className="btn btn-primary" href="#know-more">

@@ -8,6 +8,7 @@ export const treatSection = {
   cards: [
     {
       title: "PCOD/PCOS",
+      iconUrl: "/treat-icons/pcod-pcos.png",
       icon: (
         <svg viewBox="0 0 64 64" role="img" aria-label="PCOD/PCOS icon">
           <path
@@ -29,6 +30,7 @@ export const treatSection = {
     },
     {
       title: "Weight Loss",
+      iconUrl: "/treat-icons/weight-loss.png",
       icon: (
         <svg viewBox="0 0 64 64" role="img" aria-label="Weight loss icon">
           <path
@@ -51,6 +53,7 @@ export const treatSection = {
     },
     {
       title: "Thyroid",
+      iconUrl: "/treat-icons/thyroid.png",
       icon: (
         <svg viewBox="0 0 64 64" role="img" aria-label="Thyroid icon">
           <path
@@ -72,6 +75,7 @@ export const treatSection = {
     },
     {
       title: "Diabetes",
+      iconUrl: "/treat-icons/diabetes.png",
       icon: (
         <svg viewBox="0 0 64 64" role="img" aria-label="Diabetes icon">
           <path
@@ -107,7 +111,7 @@ export const servicesSection = {
   titleAccent: "where you are right now.",
   description:
     "No one-size-fits-all plans. Every program is built around your condition, your schedule, and your life.",
-  progress: { current: 1, total: 3 },
+  progress: { current: 1, total: 7 },
   cards: [
     {
       title: "Kids Nutrition",
@@ -141,6 +145,50 @@ export const servicesSection = {
       badge: null,
       primaryCta: { label: "Get This", href: "#get-sports-nutrition" },
       secondaryCta: { label: "Know More", href: "#sports-nutrition" }
+    },
+    {
+      title: "PCOS Care",
+      description:
+        "Balanced meals and practical routines to support hormones, energy, and steady progress every day.",
+      imageAlt: "Healthy meal planning for PCOS",
+      imageUrl:
+        "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=80",
+      badge: null,
+      primaryCta: { label: "Get This", href: "#get-pcos-care" },
+      secondaryCta: { label: "Know More", href: "#pcos-care" }
+    },
+    {
+      title: "Diabetes Management",
+      description:
+        "Simple food plans to help manage blood sugar, improve consistency, and fit real daily schedules.",
+      imageAlt: "Nutrition plan for diabetes management",
+      imageUrl:
+        "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?auto=format&fit=crop&w=900&q=80",
+      badge: "Popular",
+      primaryCta: { label: "Get This", href: "#get-diabetes-management" },
+      secondaryCta: { label: "Know More", href: "#diabetes-management" }
+    },
+    {
+      title: "Prenatal Nutrition",
+      description:
+        "Support a healthy pregnancy with nourishing meals that cover cravings, energy, and essential nutrients.",
+      imageAlt: "Prenatal healthy foods",
+      imageUrl:
+        "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=900&q=80",
+      badge: null,
+      primaryCta: { label: "Get This", href: "#get-prenatal-nutrition" },
+      secondaryCta: { label: "Know More", href: "#prenatal-nutrition" }
+    },
+    {
+      title: "Thyroid Support",
+      description:
+        "A realistic food-first plan to support metabolism, improve energy, and make routines easier to follow.",
+      imageAlt: "Healthy foods for thyroid support",
+      imageUrl:
+        "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=900&q=80",
+      badge: null,
+      primaryCta: { label: "Get This", href: "#get-thyroid-support" },
+      secondaryCta: { label: "Know More", href: "#thyroid-support" }
     }
   ]
 };
