@@ -1,16 +1,20 @@
 export default function Offers({ data }) {
+  const stripLoopItems = [...data.stripItems, ...data.stripItems];
+
   return (
     <section className="offers" id="offers" aria-label="Limited time offers">
       <div className="offers-strip" aria-label="Offer highlights">
         <div className="offers-strip-inner">
-          {data.stripItems.map((item, idx) => (
-            <span className="offers-strip-item" key={`${item}-${idx}`}>
-              <span className="offers-diamond" aria-hidden="true">
-                ◆
+          <div className="offers-strip-track">
+            {stripLoopItems.map((item, idx) => (
+              <span className="offers-strip-item" key={`${item}-${idx}`}>
+                <span className="offers-diamond" aria-hidden="true">
+                  ◆
+                </span>
+                {item}
               </span>
-              {item}
-            </span>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 

@@ -36,7 +36,11 @@ export default function Footer({ data }) {
 
           <nav className="new-footer-nav" aria-label="Footer Navigation">
             {["Home", "Services", "Testimonial", "Offers", "About me", "Blogs", "Contact"].map((item) => (
-              <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`} className="new-footer-nav-link">
+              <a
+                key={item}
+                href={item === "About me" ? "#/about" : `#/${item === "Home" ? "" : `#${item.toLowerCase().replace(" ", "-")}`}`}
+                className="new-footer-nav-link"
+              >
                 {item}
               </a>
             ))}

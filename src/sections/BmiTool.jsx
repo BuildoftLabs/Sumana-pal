@@ -6,42 +6,72 @@ function clampNumber(value, min, max) {
   return Math.min(max, Math.max(min, n));
 }
 
-function bmiCategory(bmi, ranges) {
-  if (bmi == null) return null;
-  for (const r of ranges) {
-    const minOk = r.min == null || bmi >= r.min;
-    const maxOk = r.max == null || bmi <= r.max;
-    if (minOk && maxOk) return r;
-  }
-  return null;
-}
-
 export default function BmiTool({ data }) {
   const [gender, setGender] = useState(data.gender.options?.[0]?.value ?? "male");
-  const [heightCm, setHeightCm] = useState("");
+  const [heightFt, setHeightFt] = useState("");
+  const [heightIn, setHeightIn] = useState("");
   const [weightKg, setWeightKg] = useState("");
+  const [hasCalculated, setHasCalculated] = useState(false);
 
-  const parsedHeight = useMemo(
-    () => clampNumber(heightCm, data.height.minCm, data.height.maxCm),
-    [heightCm, data.height.maxCm, data.height.minCm]
-  );
+  const parsedFt = useMemo(() => clampNumber(heightFt, 0, 9), [heightFt]);
+  const parsedIn = useMemo(() => clampNumber(heightIn, 0, 11), [heightIn]);
+
+  const parsedHeightCm = useMemo(() => {
+    if (parsedFt == null && parsedIn == null) return null;
+    const totalInches = (parsedFt ?? 0) * 12 + (parsedIn ?? 0);
+    if (totalInches <= 0) return null;
+    return totalInches * 2.54;
+  }, [parsedFt, parsedIn]);
+
   const parsedWeight = useMemo(
     () => clampNumber(weightKg, data.weight.minKg, data.weight.maxKg),
     [weightKg, data.weight.maxKg, data.weight.minKg]
   );
 
   const bmi = useMemo(() => {
-    if (!parsedHeight || !parsedWeight) return null;
-    const meters = parsedHeight / 100;
+    if (!parsedHeightCm || !parsedWeight) return null;
+    const meters = parsedHeightCm / 100;
     const raw = parsedWeight / (meters * meters);
     return Math.round(raw * 100) / 100;
-  }, [parsedHeight, parsedWeight]);
+  }, [parsedHeightCm, parsedWeight]);
 
-  const category = useMemo(() => bmiCategory(bmi, data.ranges), [bmi, data.ranges]);
-  const healthyRange = useMemo(
-    () => data.ranges.find((r) => r.key === "healthy") ?? null,
-    [data.ranges]
-  );
+  const bmiCategory = useMemo(() => {
+    if (bmi == null) return null;
+    const ranges = Array.isArray(data.ranges) ? data.ranges : [];
+    const matched =
+      ranges.find((r) => (r.min == null || bmi >= r.min) && (r.max == null || bmi <= r.max)) ?? null;
+    return matched?.label ?? null;
+  }, [bmi, data.ranges]);
+
+  const activeRange = useMemo(() => {
+    if (bmi == null) return null;
+    const ranges = Array.isArray(data.ranges) ? data.ranges : [];
+    return ranges.find((r) => (r.min == null || bmi >= r.min) && (r.max == null || bmi <= r.max)) ?? null;
+  }, [bmi, data.ranges]);
+
+  const activeRangeIndex = useMemo(() => {
+    if (bmi == null) return -1;
+    const ranges = Array.isArray(data.ranges) ? data.ranges : [];
+    return ranges.findIndex((r) => (r.min == null || bmi >= r.min) && (r.max == null || bmi <= r.max));
+  }, [bmi, data.ranges]);
+
+  const rangesBeforeActive = useMemo(() => {
+    const ranges = Array.isArray(data.ranges) ? data.ranges : [];
+    if (activeRangeIndex < 0) return ranges;
+    return ranges.slice(0, activeRangeIndex);
+  }, [data.ranges, activeRangeIndex]);
+
+  const rangesAfterActive = useMemo(() => {
+    const ranges = Array.isArray(data.ranges) ? data.ranges : [];
+    if (activeRangeIndex < 0) return [];
+    return ranges.slice(activeRangeIndex + 1);
+  }, [data.ranges, activeRangeIndex]);
+
+  const formatRange = (r) => {
+    if (r.min == null) return `<${r.max}`;
+    if (r.max == null) return `>${r.min}`;
+    return `${r.min} - ${r.max}`;
+  };
 
   return (
     <section className="bmi" id="bmi-calculator" aria-label="BMI calculator tool">
@@ -50,12 +80,14 @@ export default function BmiTool({ data }) {
         <h2 className="bmi-title">
           {data.titlePrefix} <span className="bmi-title-accent">{data.titleAccent}</span>
         </h2>
-        <p className="bmi-desc">{data.description}</p>
+        <p className="bmi-desc">
+          {data.description}
+          {data.form?.subtitle ? ` ${data.form.subtitle}` : ""}
+        </p>
 
         <div className="bmi-shell">
-          <div className="bmi-card">
-            <h3 className="bmi-card-title">{data.form.title}</h3>
-            <p className="bmi-card-sub">{data.form.subtitle}</p>
+          <div className="bmi-card" aria-label="BMI Calculator form">
+            <h3 className="bmi-card-title">{data.form?.title ?? "BMI Calculator"}</h3>
 
             <div className="bmi-group">
               <p className="bmi-label">{data.gender.label}</p>
@@ -69,33 +101,40 @@ export default function BmiTool({ data }) {
                     aria-selected={gender === o.value}
                     onClick={() => setGender(o.value)}
                   >
-                    {o.label}
+                    {o.label} {o.value === "male" ? "♂" : "♀"}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="bmi-grid">
-              <label className="bmi-field">
-                <span className="bmi-field-label">{data.height.label}</span>
-                <div className="bmi-inputWrap">
+            <div className="bmi-grid bmi-grid-single">
+              <div className="bmi-field">
+                <span className="bmi-field-label">Height</span>
+                <div className="bmi-heightRow">
                   <input
-                    className="bmi-input"
-                    inputMode="decimal"
-                    value={heightCm}
-                    onChange={(e) => setHeightCm(e.target.value)}
-                    placeholder={data.height.placeholder}
-                    aria-label={data.height.label}
+                    className="bmi-input bmi-inputBox"
+                    inputMode="numeric"
+                    value={heightFt}
+                    onChange={(e) => setHeightFt(e.target.value)}
+                    placeholder="feet"
+                    aria-label="Height in feet"
                   />
-                  <span className="bmi-unit">{data.height.unit}</span>
+                  <input
+                    className="bmi-input bmi-inputBox"
+                    inputMode="numeric"
+                    value={heightIn}
+                    onChange={(e) => setHeightIn(e.target.value)}
+                    placeholder="inches"
+                    aria-label="Height in inches"
+                  />
                 </div>
-              </label>
+              </div>
 
               <label className="bmi-field">
                 <span className="bmi-field-label">{data.weight.label}</span>
-                <div className="bmi-inputWrap">
+                <div className="bmi-inputWrap bmi-inputWrapWide">
                   <input
-                    className="bmi-input"
+                    className="bmi-input bmi-inputBox"
                     inputMode="decimal"
                     value={weightKg}
                     onChange={(e) => setWeightKg(e.target.value)}
@@ -107,42 +146,72 @@ export default function BmiTool({ data }) {
               </label>
             </div>
 
-            <button className="bmi-btn" type="button" onClick={() => {}}>
-              {data.form.buttonLabel}
+            <button
+              className="bmi-btn"
+              type="button"
+              onClick={() => setHasCalculated(true)}
+              aria-label="Calculate BMI"
+            >
+              {data.form?.buttonLabel ?? "Calculate BMI"}
             </button>
+
+            <p className="bmi-srResult" aria-live="polite">
+              {hasCalculated && bmi != null ? `Your BMI is ${bmi.toFixed(2)}.` : ""}
+            </p>
           </div>
 
-          <aside className="bmi-result" aria-label="BMI result">
-            <div className="bmi-result-top">
-              <p className="bmi-result-label">{data.result.title}</p>
-              <p className="bmi-result-value">{bmi == null ? data.result.emptyValue : bmi.toFixed(2)}</p>
-            </div>
+          {hasCalculated && bmi != null ? (
+            <aside className="bmi-result" aria-label="BMI result">
+              <div className="bmi-result-overlay">
+                <div className="bmi-result-top">
+                  <p className="bmi-result-label">{data.result?.title ?? "Your BMI"}</p>
+                  <p className="bmi-result-value">{bmi.toFixed(2)}</p>
+                </div>
 
-            <div className="bmi-result-block">
-              <p className="bmi-result-k">{data.result.categoryLabel}</p>
-              <p className="bmi-result-v">{category ? category.label : data.result.emptyCategory}</p>
-            </div>
+                <div className="bmi-range-list" aria-label="BMI ranges before current category">
+                  {rangesBeforeActive.map((r) => (
+                    <div key={r.key} className="bmi-range-row">
+                      <span>{r.label}</span>
+                      <span>{formatRange(r)}</span>
+                    </div>
+                  ))}
+                </div>
 
-            <div className="bmi-result-block">
-              <p className="bmi-result-k">{data.result.healthyLabel}</p>
-              <p className="bmi-result-v">
-                {healthyRange ? `${healthyRange.min} - ${healthyRange.max}` : data.result.emptyHealthy}
-              </p>
-            </div>
+                <div className="bmi-highlight" aria-label="Your BMI status and note">
+                  <div className="bmi-highlight-row">
+                    <p className="bmi-highlight-title">{bmiCategory ?? data.result?.emptyCategory ?? "--"}</p>
+                    <p className="bmi-highlight-range">{activeRange ? formatRange(activeRange) : "--"}</p>
+                  </div>
+                  <p className="bmi-note-k">• Sumana&apos;s Note</p>
+                  <p className="bmi-note-text">
+                    I know this number can feel discouraging — but it&apos;s just a starting point, not a verdict. With the
+                    right plan, steady progress is absolutely possible. Let&apos;s talk.
+                  </p>
+                  <a className="bmi-cta" href={data.result?.cta?.href ?? "#book-call"}>
+                    {data.result?.cta?.label ?? "Get Your Personalized Plan"} <span aria-hidden="true">→</span>
+                  </a>
+                </div>
 
-            <div className="bmi-result-block">
-              <p className="bmi-result-k">{data.result.overviewLabel}</p>
-              <ul className="bmi-list">
-                {data.result.overviewBullets.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-            </div>
-
-            <a className="bmi-cta" href={data.result.cta.href}>
-              {data.result.cta.label} <span aria-hidden="true">→</span>
-            </a>
-          </aside>
+                <div className="bmi-range-list bmi-range-list-after" aria-label="BMI ranges after current category">
+                  {rangesAfterActive.map((r) => (
+                    <div key={r.key} className="bmi-range-row">
+                      <span>{r.label}</span>
+                      <span>{formatRange(r)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </aside>
+          ) : (
+            <aside className="bmi-art" aria-label="BMI info illustration">
+              <img
+                className="bmi-art-img"
+                src="/bmi-side.png"
+                alt="Fill in your details and click Calculate BMI to see your result."
+                loading="lazy"
+              />
+            </aside>
+          )}
         </div>
       </div>
     </section>

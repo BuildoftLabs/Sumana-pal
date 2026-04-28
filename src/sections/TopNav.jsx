@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function TopNav({ navItems }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,10 +18,10 @@ export default function TopNav({ navItems }) {
 
   return (
     <header className={`top-nav${isScrolled ? " is-scrolled" : ""}`} aria-label="Main navigation">
-      <a className="brand" href="#home" aria-label="Sumona Pal home">
+      <Link className="brand" to="/" aria-label="Sumona Pal home">
         <span className="brand-small">DIETITIAN</span>
         <span className="brand-main">Sumona Pal</span>
-      </a>
+      </Link>
 
       <button
         className="nav-toggle"
@@ -34,18 +35,18 @@ export default function TopNav({ navItems }) {
 
       <nav className={`nav-menu${isOpen ? " is-open" : ""}`} aria-label="Primary">
         {navItems.map((item) => (
-          <a
+          <Link
             key={item}
             className={`nav-link${item === "Home" ? " is-active" : ""}`}
-            href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
+            to={item === "About me" ? "/about" : `/#${item.toLowerCase().replace(/\s+/g, "-")}`}
             onClick={() => setIsOpen(false)}
           >
             {item}
-          </a>
+          </Link>
         ))}
       </nav>
 
-      <a className="call-btn" href="#book-call">
+      <Link className="call-btn" to="/#book-call">
         <span className="call-btn-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" focusable="false">
             <path
@@ -55,7 +56,7 @@ export default function TopNav({ navItems }) {
           </svg>
         </span>
         <span>Book a call</span>
-      </a>
+      </Link>
     </header>
   );
 }
