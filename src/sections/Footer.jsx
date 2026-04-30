@@ -1,4 +1,16 @@
+import { Link } from "react-router-dom";
+
 export default function Footer({ data }) {
+  const footerPathMap = {
+    Home: "/",
+    Services: "/services",
+    Testimonial: "/testimonials",
+    Offers: "/offers",
+    "About me": "/about",
+    Blogs: "/faqs",
+    Contact: "/contact"
+  };
+
   return (
     <footer className="new-footer" aria-label="Footer">
       <div className="new-footer-container">
@@ -36,13 +48,13 @@ export default function Footer({ data }) {
 
           <nav className="new-footer-nav" aria-label="Footer Navigation">
             {["Home", "Services", "Testimonial", "Offers", "About me", "Blogs", "Contact"].map((item) => (
-              <a
+              <Link
                 key={item}
-                href={item === "About me" ? "#/about" : `#/${item === "Home" ? "" : `#${item.toLowerCase().replace(" ", "-")}`}`}
+                to={footerPathMap[item] ?? "/"}
                 className="new-footer-nav-link"
               >
                 {item}
-              </a>
+              </Link>
             ))}
           </nav>
         </div>

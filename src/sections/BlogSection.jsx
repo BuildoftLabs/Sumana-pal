@@ -7,8 +7,7 @@ function getVisibleCount() {
   return 3;
 }
 
-export default function Offers({ data }) {
-  const stripLoopItems = [...data.stripItems, ...data.stripItems];
+export default function BlogSection({ data }) {
   const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoSliding, setIsAutoSliding] = useState(true);
@@ -32,7 +31,7 @@ export default function Offers({ data }) {
 
     const intervalId = window.setInterval(() => {
       setCurrentIndex((previousIndex) => (previousIndex >= maxIndex ? 0 : previousIndex + 1));
-    }, 3200);
+    }, 3400);
 
     return () => window.clearInterval(intervalId);
   }, [isAutoSliding, maxIndex]);
@@ -52,7 +51,7 @@ export default function Offers({ data }) {
     }
     autoSlideResumeTimeoutRef.current = window.setTimeout(() => {
       setIsAutoSliding(true);
-    }, 6000);
+    }, 5500);
   };
 
   const moveCarousel = (direction) => {
@@ -69,7 +68,7 @@ export default function Offers({ data }) {
   };
 
   const handlePointerUp = (event) => {
-    if (dragStartXRef.current === null) return;
+    if (dragStartXRef.current == null) return;
     const dragDistance = event.clientX - dragStartXRef.current;
     dragStartXRef.current = null;
     if (Math.abs(dragDistance) < 50) return;
@@ -82,82 +81,58 @@ export default function Offers({ data }) {
 
   const carouselStyle = useMemo(
     () => ({
-      "--offers-visible-count": visibleCount,
-      "--offers-current-index": currentIndex
+      "--blog-visible-count": visibleCount,
+      "--blog-current-index": currentIndex
     }),
     [visibleCount, currentIndex]
   );
 
   return (
-    <section className="offers" id="offers" aria-label="Limited time offers">
-      <div className="offers-strip" aria-label="Offer highlights">
-        <div className="offers-strip-inner">
-          <div className="offers-strip-track">
-            {stripLoopItems.map((item, idx) => (
-              <span className="offers-strip-item" key={`${item}-${idx}`}>
-                <span className="offers-diamond" aria-hidden="true">
-                  ◆
-                </span>
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="offers-inner">
-        <p className="offers-badge">{data.badge}</p>
-        <h2 className="offers-title">
-          {data.titlePrefix} <span className="offers-title-accent">{data.titleAccent}</span>
+    <section className="blog" id="blogs" aria-label="From the blog">
+      <div className="blog-inner">
+        <p className="blog-badge">{data.badge}</p>
+        <h2 className="blog-title">
+          {data.titlePrefix} <span className="blog-title-accent">{data.titleAccent}</span>
         </h2>
-        <p className="offers-desc">{data.description}</p>
+        <p className="blog-desc">{data.description}</p>
 
-        <div className="offers-carousel" style={carouselStyle}>
-          <div className="offers-carousel-controls" aria-label="Offers carousel controls">
+        <div className="blog-carousel" style={carouselStyle}>
+          <div className="blog-carousel-controls" aria-label="Blog carousel controls">
             <button
-              className="offers-carousel-btn"
+              className="blog-carousel-btn"
               type="button"
               onClick={() => moveCarousel("prev")}
-              aria-label="Previous offers"
+              aria-label="Previous blogs"
             >
               &#8249;
             </button>
             <button
-              className="offers-carousel-btn"
+              className="blog-carousel-btn"
               type="button"
               onClick={() => moveCarousel("next")}
-              aria-label="Next offers"
+              aria-label="Next blogs"
             >
               &#8250;
             </button>
           </div>
 
           <div
-            className="offers-track"
+            className="blog-track"
             role="list"
-            aria-label="Special deal cards"
+            aria-label="Blog cards"
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerLeave}
           >
             {data.cards.map((card, idx) => (
-              <article className="offer-card" role="listitem" key={`${card.title}-${idx}`}>
-                <div className="offer-media">
-                  <img className="offer-img" src={card.imageUrl} alt={card.imageAlt} loading="lazy" />
-                </div>
-
-                <div className="offer-body">
-                  <h3 className="offer-title">{card.title}</h3>
-                  <p className="offer-sub">{card.subtitle}</p>
-
-                  <div className="offer-actions">
-                    <a className="offer-btn offer-btn-primary" href={card.primaryCta.href}>
-                      {card.primaryCta.label}
-                    </a>
-                    <a className="offer-btn offer-btn-outline" href={card.secondaryCta.href}>
-                      {card.secondaryCta.label} <span aria-hidden="true">→</span>
-                    </a>
-                  </div>
+              <article className="blog-card" role="listitem" key={`${card.title}-${idx}`}>
+                <img className="blog-card-img" src={card.imageUrl} alt={card.imageAlt} loading="lazy" />
+                <div className="blog-card-body">
+                  <h3 className="blog-card-title">{card.title}</h3>
+                  <p className="blog-card-date">{card.date}</p>
+                  <button type="button" className="blog-card-read">
+                    {card.readTime} <span aria-hidden="true">→</span>
+                  </button>
                 </div>
               </article>
             ))}
@@ -167,4 +142,3 @@ export default function Offers({ data }) {
     </section>
   );
 }
-

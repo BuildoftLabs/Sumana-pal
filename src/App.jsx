@@ -6,6 +6,12 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/services" element={<HomePage scrollToSection="services" />} />
+      <Route path="/testimonials" element={<HomePage scrollToSection="testimonials" />} />
+      <Route path="/offers" element={<HomePage scrollToSection="offers" />} />
+      <Route path="/contact" element={<HomePage scrollToSection="contact" />} />
+      <Route path="/faqs" element={<HomePage scrollToSection="faqs" />} />
+      <Route path="/bmi-calculator" element={<HomePage scrollToSection="bmi-calculator" />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

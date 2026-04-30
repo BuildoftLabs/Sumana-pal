@@ -248,8 +248,8 @@ export const transformationsSection = {
       category: "Weight Loss",
       beforeLabel: "Before",
       afterLabel: "After",
-      beforeImageUrl: null,
-      afterImageUrl: null,
+      beforeImageUrl: "/transform-before-1.png",
+      afterImageUrl: "/transform-after-1.png",
       person: "Priya, 28 F",
       chips: ["-14 kg", "4 Months"],
       tag: "Weight Loss",
@@ -259,8 +259,8 @@ export const transformationsSection = {
       category: "Weight Gain",
       beforeLabel: "Before",
       afterLabel: "After",
-      beforeImageUrl: null,
-      afterImageUrl: null,
+      beforeImageUrl: "/transform-before-2.png",
+      afterImageUrl: "/transform-after-2.png",
       person: "Priya, 28 F",
       chips: ["-14 kg", "4 Months"],
       tag: "Weight Gain",
@@ -276,6 +276,39 @@ export const transformationsSection = {
       chips: ["-14 kg", "4 Months"],
       tag: "Weight Loss",
       quote: "\"I didn't change my lifestyle. She changed my eating — that changed everything.\""
+    },
+    {
+      category: "Weight Gain",
+      beforeLabel: "Before",
+      afterLabel: "After",
+      beforeImageUrl: null,
+      afterImageUrl: null,
+      person: "Ananya, 24 F",
+      chips: ["+8 kg", "5 Months"],
+      tag: "Weight Gain",
+      quote: "\"This plan helped me gain healthy weight and feel stronger every week.\""
+    },
+    {
+      category: "Weight Loss",
+      beforeLabel: "Before",
+      afterLabel: "After",
+      beforeImageUrl: null,
+      afterImageUrl: null,
+      person: "Ritu, 31 F",
+      chips: ["-11 kg", "3 Months"],
+      tag: "Weight Loss",
+      quote: "\"No crash diet, no stress. Just consistency and clear guidance.\""
+    },
+    {
+      category: "Weight Gain",
+      beforeLabel: "Before",
+      afterLabel: "After",
+      beforeImageUrl: null,
+      afterImageUrl: null,
+      person: "Nisha, 27 F",
+      chips: ["+6 kg", "4 Months"],
+      tag: "Weight Gain",
+      quote: "\"Meals were practical and easy to follow — I finally saw real progress.\""
     }
   ],
   cta: {
@@ -317,8 +350,7 @@ export const offersSection = {
       title: "50% Off",
       subtitle: "Navratri Offer",
       imageAlt: "Offer poster",
-      imageUrl:
-        "https://images.unsplash.com/photo-1606925797300-0b35e9d1794e?auto=format&fit=crop&w=900&q=80",
+      imageUrl: "/offer-card.png",
       primaryCta: { label: "Grab This Offer", href: "#grab-offer-1" },
       secondaryCta: { label: "Know More", href: "#offer-1" }
     },
@@ -326,8 +358,7 @@ export const offersSection = {
       title: "50% Off",
       subtitle: "Navratri Offer",
       imageAlt: "Offer poster",
-      imageUrl:
-        "https://images.unsplash.com/photo-1606925797300-0b35e9d1794e?auto=format&fit=crop&w=900&q=80",
+      imageUrl: "/offer-card.png",
       primaryCta: { label: "Grab This Offer", href: "#grab-offer-2" },
       secondaryCta: { label: "Know More", href: "#offer-2" }
     },
@@ -335,10 +366,67 @@ export const offersSection = {
       title: "50% Off",
       subtitle: "Navratri Offer",
       imageAlt: "Offer poster",
-      imageUrl:
-        "https://images.unsplash.com/photo-1606925797300-0b35e9d1794e?auto=format&fit=crop&w=900&q=80",
+      imageUrl: "/offer-card.png",
       primaryCta: { label: "Grab This Offer", href: "#grab-offer-3" },
       secondaryCta: { label: "Know More", href: "#offer-3" }
+    },
+    {
+      title: "40% Off",
+      subtitle: "Festival Offer",
+      imageAlt: "Offer poster",
+      imageUrl: "/offer-card.png",
+      primaryCta: { label: "Grab This Offer", href: "#grab-offer-4" },
+      secondaryCta: { label: "Know More", href: "#offer-4" }
+    },
+    {
+      title: "Buy 1 Get 1",
+      subtitle: "Limited Deal",
+      imageAlt: "Offer poster",
+      imageUrl: "/offer-card.png",
+      primaryCta: { label: "Grab This Offer", href: "#grab-offer-5" },
+      secondaryCta: { label: "Know More", href: "#offer-5" }
+    },
+    {
+      title: "30% Off",
+      subtitle: "Weekend Special",
+      imageAlt: "Offer poster",
+      imageUrl: "/offer-card.png",
+      primaryCta: { label: "Grab This Offer", href: "#grab-offer-6" },
+      secondaryCta: { label: "Know More", href: "#offer-6" }
+    }
+  ]
+};
+
+export const blogSection = {
+  badge: "From The Blog",
+  titlePrefix: "Nutrition Advice That",
+  titleAccent: "Actually Makes Sense.",
+  description:
+    "I write about nutrition the way I wish someone had explained it to me — in plain language, with real-life examples, without the guilt.",
+  cards: [
+    {
+      title: "I stopped feeling exhausted all the time — without changing my medication",
+      date: "Jan 10, 2025",
+      readTime: "5 Min Read",
+      imageAlt: "Couple celebrating near beach at sunset",
+      imageUrl:
+        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      title: "My child won't eat vegetables. Here's what I tell parents.",
+      date: "Jan 10, 2025",
+      readTime: "4 Min Read",
+      imageAlt: "Toddler eating with spoon",
+      imageUrl:
+        "https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      title: "Health benefits of having soaked dates empty stomach every morning",
+      date: "Dec 5, 2024",
+      readTime: "6 Min Read",
+      imageAlt: "Bowl of dates on table",
+      imageUrl:
+        "https://images.unsplash.com/photo-1604908554027-7b1138f7f6f0?auto=format&fit=crop&w=900&q=80"
     }
   ]
 };

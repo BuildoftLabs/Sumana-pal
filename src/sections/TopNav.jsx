@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+const navPathMap = {
+  Home: "/",
+  Services: "/services",
+  Testimonial: "/testimonials",
+  Offers: "/offers",
+  "About me": "/about",
+  Blogs: "/faqs",
+  Contact: "/contact"
+};
+
 export default function TopNav({ navItems }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -38,7 +48,7 @@ export default function TopNav({ navItems }) {
           <Link
             key={item}
             className={`nav-link${item === "Home" ? " is-active" : ""}`}
-            to={item === "About me" ? "/about" : `/#${item.toLowerCase().replace(/\s+/g, "-")}`}
+            to={navPathMap[item] ?? "/"}
             onClick={() => setIsOpen(false)}
           >
             {item}
@@ -46,7 +56,7 @@ export default function TopNav({ navItems }) {
         ))}
       </nav>
 
-      <Link className="call-btn" to="/#book-call">
+      <Link className="call-btn" to="/contact">
         <span className="call-btn-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" focusable="false">
             <path

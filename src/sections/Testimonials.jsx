@@ -50,8 +50,25 @@ export default function Testimonials({ data }) {
             <p className="testimonials-cta-sub">{data.ctaBar.subtitle}</p>
           </div>
           <a className="google-btn" href={data.ctaBar.buttonHref}>
-            <span className="google-g" aria-hidden="true">
-              G
+            <span className="google-logo" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path
+                  fill="#EA4335"
+                  d="M12 4.8c1.7 0 3.2.58 4.4 1.72l3.27-3.27C17.62 1.34 14.99 0 12 0 7.31 0 3.27 2.69 1.24 6.61l3.8 2.95C5.95 6.5 8.73 4.8 12 4.8Z"
+                />
+                <path
+                  fill="#4285F4"
+                  d="M23.49 12.27c0-.84-.07-1.64-.2-2.41H12v4.56h6.49a5.56 5.56 0 0 1-2.4 3.64v3h3.88c2.28-2.1 3.52-5.2 3.52-8.79Z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.04 14.44a7.2 7.2 0 0 1 0-4.88V6.61h-3.8a12 12 0 0 0 0 10.78l3.8-2.95Z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 24c3 0 5.52-.99 7.37-2.69l-3.88-3a6.7 6.7 0 0 1-10.45-3.87l-3.8 2.95A12 12 0 0 0 12 24Z"
+                />
+              </svg>
             </span>
             {data.ctaBar.buttonLabel}
           </a>

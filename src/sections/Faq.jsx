@@ -31,7 +31,15 @@ export default function Faq({ data }) {
                 >
                   <span className="faq-q">{item.q}</span>
                   <span className="faq-icon" aria-hidden="true">
-                    {isOpen ? "▴" : "▾"}
+                    {isOpen ? (
+                      <svg viewBox="0 0 20 20" focusable="false">
+                        <path d="M4 12l6-6 6 6" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 20 20" focusable="false">
+                        <path d="M4 8l6 6 6-6" />
+                      </svg>
+                    )}
                   </span>
                 </button>
 
