@@ -2197,7 +2197,7 @@ main {
 
 .question-form-title {
   margin: 0;
-  font-size: clamp(1.42rem, 1.9vw, 1.72rem);
+  font-size: clamp(1.22rem, 1.65vw, 1.5rem);
   line-height: 1.14;
   letter-spacing: -0.01em;
   font-weight: 700;
@@ -2323,8 +2323,8 @@ main {
   }
 
   .question-form-title {
-    font-size: 2rem;
-    line-height: 1.1;
+    font-size: clamp(1.2rem, 4.2vw, 1.45rem);
+    line-height: 1.15;
   }
 
   .question-form-sub {
@@ -2631,11 +2631,26 @@ main {
   .offers-carousel {
     --offers-visible-count: 1.35;
   }
-}
 
-@media (max-width: 580px) {
   .offers-inner {
     padding: 44px 14px 70px;
+  }
+
+  .offers-strip {
+    height: 72px;
+  }
+
+  .offers-strip-item {
+    font-size: 0.95rem;
+  }
+
+  .offers-diamond {
+    font-size: 0.82rem;
+  }
+
+  .offer-title {
+    font-size: 1.2rem;
+    line-height: 1.12;
   }
 }
 
