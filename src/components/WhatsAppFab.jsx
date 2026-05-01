@@ -1,11 +1,11 @@
 import React from "react";
 
-const PHONE_E164_NO_PLUS = "918013007962";
+export const WHATSAPP_PHONE_E164_NO_PLUS = "918013007962";
 const DEFAULT_MESSAGE = "Hi! I want to enquire about your nutrition plans.";
 
-function buildWhatsAppHref(message = DEFAULT_MESSAGE) {
+export function buildWhatsAppHref(message = DEFAULT_MESSAGE) {
   const encoded = encodeURIComponent(message);
-  return `https://wa.me/${PHONE_E164_NO_PLUS}?text=${encoded}`;
+  return `https://wa.me/${WHATSAPP_PHONE_E164_NO_PLUS}?text=${encoded}`;
 }
 
 export default function WhatsAppFab({ message = DEFAULT_MESSAGE }) {

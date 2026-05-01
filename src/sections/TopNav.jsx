@@ -7,7 +7,7 @@ const navPathMap = {
   Testimonial: "/testimonials",
   Offers: "/offers",
   "About me": "/about",
-  Blogs: "/faqs",
+  Blogs: "/blogs",
   Contact: "/contact"
 };
 

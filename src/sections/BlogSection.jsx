@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function getVisibleCount() {
   if (typeof window === "undefined") return 3;
@@ -8,6 +9,7 @@ function getVisibleCount() {
 }
 
 export default function BlogSection({ data }) {
+  const navigate = useNavigate();
   const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoSliding, setIsAutoSliding] = useState(true);
@@ -90,7 +92,20 @@ export default function BlogSection({ data }) {
   return (
     <section className="blog" id="blogs" aria-label="From the blog">
       <div className="blog-inner">
-        <p className="blog-badge">{data.badge}</p>
+        <div className="blog-head">
+          <p className="blog-badge">{data.badge}</p>
+          <button
+            className="blog-viewall"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigate("/blogs");
+            }}
+          >
+            View all <span aria-hidden="true">→</span>
+          </button>
+        </div>
         <h2 className="blog-title">
           {data.titlePrefix} <span className="blog-title-accent">{data.titleAccent}</span>
         </h2>

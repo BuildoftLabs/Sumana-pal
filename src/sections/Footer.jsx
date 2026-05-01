@@ -7,24 +7,38 @@ export default function Footer({ data }) {
     Testimonial: "/testimonials",
     Offers: "/offers",
     "About me": "/about",
-    Blogs: "/faqs",
+    Blogs: "/blogs",
     Contact: "/contact"
   };
 
   return (
     <footer className="new-footer" aria-label="Footer">
       <div className="new-footer-container">
-        {/* Left Column */}
         <div className="new-footer-left">
           <p className="new-footer-brand-title">DIETITIAN</p>
           <h2 className="new-footer-brand-name">Sumana Pal Roy</h2>
           <p className="new-footer-tagline">Let Food Be The Medicine</p>
           <p className="new-footer-desc">
-            Nutrition is more than just counting calories. It is about understanding your body's needs
-            and providing it with the right fuel. Let's work together to create a balanced, sustainable
-            lifestyle that helps you achieve your health goals and feel your absolute best every single day.
+            Helping busy people eat better, feel stronger, and manage health conditions — through
+            personalized diet plans that fit real life.
           </p>
+        </div>
 
+        <div className="new-footer-links" aria-label="Footer quick links">
+          <nav className="new-footer-nav" aria-label="Footer Navigation">
+            {["Home", "Services", "Testimonial", "Offers", "About me", "Blogs", "Contact"].map((item) => (
+              <Link
+                key={item}
+                to={footerPathMap[item] ?? "/"}
+                className="new-footer-nav-link"
+              >
+                {item}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="new-footer-right">
           <div className="new-footer-socials" aria-label="Social links">
             <a href={data.links.instagram.href} target="_blank" rel="noreferrer" className="new-footer-social-icon" aria-label="Instagram">
               <svg viewBox="0 0 24 24">
@@ -46,21 +60,6 @@ export default function Footer({ data }) {
             </a>
           </div>
 
-          <nav className="new-footer-nav" aria-label="Footer Navigation">
-            {["Home", "Services", "Testimonial", "Offers", "About me", "Blogs", "Contact"].map((item) => (
-              <Link
-                key={item}
-                to={footerPathMap[item] ?? "/"}
-                className="new-footer-nav-link"
-              >
-                {item}
-              </Link>
-            ))}
-          </nav>
-        </div>
-
-        {/* Right Column */}
-        <div className="new-footer-right">
           <div className="new-footer-map-widget">
             <iframe
               title={data.map.iframeTitle}

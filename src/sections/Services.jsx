@@ -13,6 +13,8 @@ export default function Services({ data }) {
   const [isAutoSliding, setIsAutoSliding] = useState(true);
   const dragStartXRef = useRef(null);
   const autoSlideResumeTimeoutRef = useRef(null);
+  const progressTrackRef = useRef(null);
+  const progressIsDraggingRef = useRef(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,7 +27,7 @@ export default function Services({ data }) {
 
   const maxIndex = Math.max(Math.ceil(data.cards.length - visibleCount), 0);
   const totalSteps = maxIndex + 1;
-  const progressWidth = totalSteps <= 1 ? 100 : ((currentIndex + 1) / totalSteps) * 100;
+  const progressWidth = maxIndex <= 0 ? 100 : (currentIndex / maxIndex) * 100;
 
   useEffect(() => {
     setCurrentIndex((previousIndex) => Math.min(previousIndex, maxIndex));
@@ -74,6 +76,55 @@ export default function Services({ data }) {
     });
   };
 
+  const clampIndex = (idx) => Math.max(0, Math.min(maxIndex, idx));
+
+  const setIndexFromClientX = (clientX) => {
+    const track = progressTrackRef.current;
+    if (!track) return;
+
+    const rect = track.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const ratio = rect.width <= 0 ? 0 : Math.max(0, Math.min(1, x / rect.width));
+    const nextIndex = clampIndex(Math.round(ratio * maxIndex));
+
+    pauseAutoSlide();
+    setCurrentIndex(nextIndex);
+  };
+
+  const handleProgressPointerDown = (event) => {
+    if (maxIndex === 0) return;
+    progressIsDraggingRef.current = true;
+    setIndexFromClientX(event.clientX);
+  };
+
+  const handleProgressPointerMove = (event) => {
+    if (!progressIsDraggingRef.current) return;
+    setIndexFromClientX(event.clientX);
+  };
+
+  const handleProgressPointerUp = () => {
+    progressIsDraggingRef.current = false;
+  };
+
+  useEffect(() => {
+    const handleWindowPointerMove = (event) => {
+      if (!progressIsDraggingRef.current) return;
+      setIndexFromClientX(event.clientX);
+    };
+
+    const handleWindowPointerUp = () => {
+      progressIsDraggingRef.current = false;
+    };
+
+    window.addEventListener("pointermove", handleWindowPointerMove);
+    window.addEventListener("pointerup", handleWindowPointerUp);
+
+    return () => {
+      window.removeEventListener("pointermove", handleWindowPointerMove);
+      window.removeEventListener("pointerup", handleWindowPointerUp);
+    };
+  }, [maxIndex]);
+
   const handlePointerDown = (event) => {
     dragStartXRef.current = event.clientX;
   };
@@ -113,25 +164,6 @@ export default function Services({ data }) {
         <p className="services-desc">{data.description}</p>
 
         <div className="services-carousel" style={carouselStyle}>
-          <div className="services-carousel-controls" aria-label="Services carousel controls">
-            <button
-              className="services-carousel-btn"
-              type="button"
-              onClick={() => moveCarousel("prev")}
-              aria-label="Previous services"
-            >
-              &#8249;
-            </button>
-            <button
-              className="services-carousel-btn"
-              type="button"
-              onClick={() => moveCarousel("next")}
-              aria-label="Next services"
-            >
-              &#8250;
-            </button>
-          </div>
-
           <div
             className="services-track"
             role="list"
@@ -167,16 +199,37 @@ export default function Services({ data }) {
 
         <div
           className="services-progress"
-          role="progressbar"
-          aria-label="Services carousel progress"
-          aria-valuenow={currentIndex + 1}
-          aria-valuemin={1}
-          aria-valuemax={totalSteps}
+          ref={progressTrackRef}
+          role="slider"
+          tabIndex={0}
+          aria-label="Services carousel scrubber"
+          aria-valuenow={currentIndex}
+          aria-valuemin={0}
+          aria-valuemax={maxIndex}
+          aria-disabled={maxIndex === 0}
+          onPointerDown={handleProgressPointerDown}
+          onPointerMove={handleProgressPointerMove}
+          onPointerUp={handleProgressPointerUp}
+          onPointerCancel={handleProgressPointerUp}
+          onKeyDown={(e) => {
+            if (maxIndex === 0) return;
+            if (e.key === "ArrowLeft") {
+              e.preventDefault();
+              pauseAutoSlide();
+              setCurrentIndex((v) => clampIndex(v - 1));
+            }
+            if (e.key === "ArrowRight") {
+              e.preventDefault();
+              pauseAutoSlide();
+              setCurrentIndex((v) => clampIndex(v + 1));
+            }
+          }}
         >
           <span
             className="services-progress-fill"
             style={{ width: `${progressWidth}%` }}
           />
+          <span className="services-progress-thumb" aria-hidden="true" style={{ left: `${progressWidth}%` }} />
         </div>
       </div>
     </section>

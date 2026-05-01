@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AboutPage from "./pages/AboutPage";
+import BlogPostPage from "./pages/BlogPostPage";
+import BlogsPage from "./pages/BlogsPage";
 import HomePage from "./pages/HomePage";
 
 export default function App() {
@@ -12,6 +14,8 @@ export default function App() {
       <Route path="/contact" element={<HomePage scrollToSection="contact" />} />
       <Route path="/faqs" element={<HomePage scrollToSection="faqs" />} />
       <Route path="/bmi-calculator" element={<HomePage scrollToSection="bmi-calculator" />} />
+      <Route path="/blogs" element={<BlogsPage />} />
+      <Route path="/blogs/:slug" element={<BlogPostPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

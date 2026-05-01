@@ -403,30 +403,51 @@ export const blogSection = {
   titleAccent: "Actually Makes Sense.",
   description:
     "I write about nutrition the way I wish someone had explained it to me — in plain language, with real-life examples, without the guilt.",
+  filters: ["All", "Weight Loss", "Weight Gain", "PCOS", "Diabetes", "Thyroid", "Pregnancy", "Kids", "Gut Health"],
   cards: [
     {
+      slug: "exhausted-without-medication",
       title: "I stopped feeling exhausted all the time — without changing my medication",
+      subheading: "Simple food and routine tweaks that helped stabilize energy (without extreme rules).",
       date: "Jan 10, 2025",
       readTime: "5 Min Read",
+      category: "Weight Loss",
       imageAlt: "Couple celebrating near beach at sunset",
       imageUrl:
         "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=80"
     },
     {
+      slug: "kids-vegetables-parents",
       title: "My child won't eat vegetables. Here's what I tell parents.",
+      subheading: "A no-pressure approach that builds habits without food fights.",
       date: "Jan 10, 2025",
       readTime: "4 Min Read",
+      category: "Kids",
       imageAlt: "Toddler eating with spoon",
       imageUrl:
         "https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?auto=format&fit=crop&w=900&q=80"
     },
     {
+      slug: "soaked-dates-empty-stomach",
       title: "Health benefits of having soaked dates empty stomach every morning",
+      subheading: "When it helps, when it doesn’t, and how to do it without overdoing sugar.",
       date: "Dec 5, 2024",
       readTime: "6 Min Read",
+      category: "Gut Health",
       imageAlt: "Bowl of dates on table",
       imageUrl:
         "https://images.unsplash.com/photo-1604908554027-7b1138f7f6f0?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      slug: "pcos-breakfast-balance",
+      title: "PCOS-friendly breakfast combos that keep cravings in control",
+      subheading: "3 easy templates you can rotate all week — Indian & simple.",
+      date: "Feb 2, 2025",
+      readTime: "5 Min Read",
+      category: "PCOS",
+      imageAlt: "Healthy breakfast bowl",
+      imageUrl:
+        "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=80"
     }
   ]
 };

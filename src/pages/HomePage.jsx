@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import {
   blogSection,
   bmiSection,
@@ -25,10 +25,18 @@ import TopNav from "../sections/TopNav";
 import Transformations from "../sections/Transformations";
 import Treat from "../sections/Treat";
 import WhatsAppFab from "../components/WhatsAppFab";
+import { buildWhatsAppHref } from "../components/WhatsAppFab";
 
 export default function HomePage({ scrollToSection = null }) {
   const [loaderStage, setLoaderStage] = useState("visible");
   const [isLeadPopupOpen, setIsLeadPopupOpen] = useState(false);
+  const leadNameId = useId();
+  const leadPhoneId = useId();
+  const leadHelpId = useId();
+
+  const [leadName, setLeadName] = useState("");
+  const [leadPhone, setLeadPhone] = useState("");
+  const [leadHelp, setLeadHelp] = useState("");
 
   useEffect(() => {
     const openCurtainTimer = window.setTimeout(() => setLoaderStage("opening"), 2300);
@@ -66,6 +74,20 @@ export default function HomePage({ scrollToSection = null }) {
     return () => window.clearTimeout(popupTimer);
   }, [loaderStage]);
 
+  const handleLeadSubmit = (e) => {
+    e.preventDefault();
+
+    const message = [
+      "Hi! I want a personalized diet plan.",
+      "",
+      `Name: ${leadName || "-"}`,
+      `Phone: ${leadPhone || "-"}`,
+      `Help: ${leadHelp || "-"}`
+    ].join("\n");
+
+    window.open(buildWhatsAppHref(message), "_blank", "noopener,noreferrer");
+  };
+
   return (
     <>
       {loaderStage !== "hidden" && (
@@ -99,26 +121,50 @@ export default function HomePage({ scrollToSection = null }) {
             <h3 className="lead-popup-title">Want a Personalized Diet Plan?</h3>
             <p className="lead-popup-sub">Fill this form and I'll get back to you within 24 hours — usually sooner.</p>
 
-            <form className="lead-popup-form" onSubmit={(e) => e.preventDefault()}>
+            <form className="lead-popup-form" onSubmit={handleLeadSubmit}>
               <label className="lead-popup-field">
                 <span className="lead-popup-label">
                   Your Name <span className="lead-popup-required">*</span>
                 </span>
-                <input className="lead-popup-input" type="text" placeholder="Enter Your Full Name" />
+                <input
+                  className="lead-popup-input"
+                  id={leadNameId}
+                  type="text"
+                  placeholder="Enter Your Full Name"
+                  value={leadName}
+                  onChange={(e) => setLeadName(e.target.value)}
+                  required
+                />
               </label>
 
               <label className="lead-popup-field">
                 <span className="lead-popup-label">
                   Phone Number <span className="lead-popup-required">*</span>
                 </span>
-                <input className="lead-popup-input" type="tel" placeholder="Enter Your Phone Number" />
+                <input
+                  className="lead-popup-input"
+                  id={leadPhoneId}
+                  type="tel"
+                  placeholder="Enter Your Phone Number"
+                  value={leadPhone}
+                  onChange={(e) => setLeadPhone(e.target.value)}
+                  required
+                />
               </label>
 
               <label className="lead-popup-field">
                 <span className="lead-popup-label">
                   How can we help you? <span className="lead-popup-required">*</span>
                 </span>
-                <input className="lead-popup-input" type="text" placeholder="example@mail.com" />
+                <input
+                  className="lead-popup-input"
+                  id={leadHelpId}
+                  type="text"
+                  placeholder="Write your enquiry..."
+                  value={leadHelp}
+                  onChange={(e) => setLeadHelp(e.target.value)}
+                  required
+                />
               </label>
 
               <button className="lead-popup-submit" type="submit">
