@@ -24,6 +24,7 @@ import Testimonials from "../sections/Testimonials";
 import TopNav from "../sections/TopNav";
 import Transformations from "../sections/Transformations";
 import Treat from "../sections/Treat";
+import WhatsAppFab from "../components/WhatsAppFab";
 
 export default function HomePage({ scrollToSection = null }) {
   const [loaderStage, setLoaderStage] = useState("visible");
@@ -146,6 +147,7 @@ export default function HomePage({ scrollToSection = null }) {
         <BlogSection data={blogSection} />
         <Faq data={faqSection} />
         <Footer data={footerSection} />
+        <WhatsAppFab message="Hi! I want to enquire about your nutrition plans." />
       </main>
     </>
   );

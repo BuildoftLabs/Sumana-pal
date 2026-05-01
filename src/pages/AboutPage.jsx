@@ -1,5 +1,6 @@
 import TopNav from "../sections/TopNav";
 import { navItems } from "../content/homeContent";
+import WhatsAppFab from "../components/WhatsAppFab";
 
 export default function AboutPage() {
   return (
@@ -54,6 +55,8 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      <WhatsAppFab message="Hi! I want to enquire about your nutrition plans." />
     </main>
   );
 }
