@@ -131,6 +131,11 @@ export default function HomePage({ scrollToSection = null }) {
       <main className={loaderStage !== "visible" ? "site-shell is-ready" : "site-shell"} id="home">
         <TopNav navItems={navItems} />
         <Hero />
+        <div className="hero-scroll-indicator" aria-hidden="true">
+          <span className="hero-scroll-dot is-pill" />
+          <span className="hero-scroll-dot" />
+          <span className="hero-scroll-dot" />
+        </div>
         <Treat data={treatSection} />
         <Services data={servicesSection} />
         <Testimonials data={testimonialsSection} />

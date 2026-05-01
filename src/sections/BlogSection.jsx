@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 function getVisibleCount() {
   if (typeof window === "undefined") return 3;
-  if (window.innerWidth <= 580) return 1;
+  if (window.innerWidth <= 580) return 1.35;
   if (window.innerWidth <= 900) return 2;
   return 3;
 }
@@ -20,7 +20,7 @@ export default function BlogSection({ data }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const maxIndex = Math.max(data.cards.length - visibleCount, 0);
+  const maxIndex = Math.max(Math.ceil(data.cards.length - visibleCount), 0);
 
   useEffect(() => {
     setCurrentIndex((previousIndex) => Math.min(previousIndex, maxIndex));

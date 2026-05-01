@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 
 const heroTitles = ["Dietitian", "Nutritionist", "Diet Expert", "Nutritional Therapist"];
+const heroBanners = [
+  {
+    imageUrl: "/hero-image.png",
+    imageAlt: "Dietitian Sumana Pal Roy sitting at her office desk"
+  },
+  {
+    imageUrl: "/hero-banner-2.png",
+    imageAlt: "Sumana Pal Roy standing beside a nutrition conference banner"
+  }
+];
 
 export default function Hero() {
   const [titleIndex, setTitleIndex] = useState(0);
+  const [bannerIndex, setBannerIndex] = useState(0);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -13,12 +24,30 @@ export default function Hero() {
     return () => window.clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setBannerIndex((currentIndex) => (currentIndex + 1) % heroBanners.length);
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  const moveBanner = (direction) => {
+    setBannerIndex((currentIndex) => {
+      if (direction === "prev") {
+        return currentIndex <= 0 ? heroBanners.length - 1 : currentIndex - 1;
+      }
+
+      return (currentIndex + 1) % heroBanners.length;
+    });
+  };
+
   return (
     <section className="hero" aria-label="Introduction section">
       <img
         className="hero-image"
-        src="/hero-image.png"
-        alt="Dietitian Sumana Pal Roy sitting at her office desk"
+        src={heroBanners[bannerIndex].imageUrl}
+        alt={heroBanners[bannerIndex].imageAlt}
         loading="eager"
       />
 
@@ -42,10 +71,20 @@ export default function Hero() {
         </div>
       </div>
 
-      <button className="slider-arrow slider-arrow-left" aria-label="Previous slide">
+      <button
+        className="slider-arrow slider-arrow-left"
+        type="button"
+        aria-label="Previous banner"
+        onClick={() => moveBanner("prev")}
+      >
         &#8249;
       </button>
-      <button className="slider-arrow slider-arrow-right" aria-label="Next slide">
+      <button
+        className="slider-arrow slider-arrow-right"
+        type="button"
+        aria-label="Next banner"
+        onClick={() => moveBanner("next")}
+      >
         &#8250;
       </button>
     </section>
