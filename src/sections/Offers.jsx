@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useInView } from "../hooks/useInView";
 
 function getVisibleCount() {
   if (typeof window === "undefined") return 3;
@@ -14,6 +15,7 @@ export default function Offers({ data }) {
   const [isAutoSliding, setIsAutoSliding] = useState(true);
   const dragStartXRef = useRef(null);
   const autoSlideResumeTimeoutRef = useRef(null);
+  const [sectionRef, isInView] = useInView({ threshold: 0.1 });
 
   useEffect(() => {
     const handleResize = () => setVisibleCount(getVisibleCount());
@@ -28,14 +30,14 @@ export default function Offers({ data }) {
   }, [maxIndex]);
 
   useEffect(() => {
-    if (maxIndex === 0 || !isAutoSliding) return undefined;
+    if (maxIndex === 0 || !isAutoSliding || !isInView) return undefined;
 
     const intervalId = window.setInterval(() => {
       setCurrentIndex((previousIndex) => (previousIndex >= maxIndex ? 0 : previousIndex + 1));
     }, 3200);
 
     return () => window.clearInterval(intervalId);
-  }, [isAutoSliding, maxIndex]);
+  }, [isAutoSliding, maxIndex, isInView]);
 
   useEffect(() => {
     return () => {
@@ -89,7 +91,7 @@ export default function Offers({ data }) {
   );
 
   return (
-    <section className="offers" id="offers" aria-label="Limited time offers">
+    <section className="offers" id="offers" aria-label="Limited time offers" ref={sectionRef}>
       <div className="offers-strip" aria-label="Offer highlights">
         <div className="offers-strip-inner">
           <div className="offers-strip-track">

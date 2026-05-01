@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useInView } from "../hooks/useInView";
 
 function getVisibleCount() {
   if (typeof window === "undefined") return 3;
@@ -15,6 +16,7 @@ export default function Services({ data }) {
   const autoSlideResumeTimeoutRef = useRef(null);
   const progressTrackRef = useRef(null);
   const progressIsDraggingRef = useRef(false);
+  const [sectionRef, isInView] = useInView({ threshold: 0.1 });
 
   useEffect(() => {
     const handleResize = () => {
@@ -34,14 +36,14 @@ export default function Services({ data }) {
   }, [maxIndex]);
 
   useEffect(() => {
-    if (maxIndex === 0 || !isAutoSliding) return undefined;
+    if (maxIndex === 0 || !isAutoSliding || !isInView) return undefined;
 
     const intervalId = window.setInterval(() => {
       setCurrentIndex((previousIndex) => (previousIndex >= maxIndex ? 0 : previousIndex + 1));
     }, 3500);
 
     return () => window.clearInterval(intervalId);
-  }, [isAutoSliding, maxIndex]);
+  }, [isAutoSliding, maxIndex, isInView]);
 
   useEffect(() => {
     return () => {
@@ -153,7 +155,7 @@ export default function Services({ data }) {
   );
 
   return (
-    <section className="services" id="services" aria-label="Services">
+    <section className="services" id="services" aria-label="Services" ref={sectionRef}>
       <div className="services-inner">
         <p className="services-badge">{data.badge}</p>
 

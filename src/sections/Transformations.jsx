@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useInView } from "../hooks/useInView";
 
 function getVisibleCount() {
   if (typeof window === "undefined") return 3;
@@ -14,6 +15,7 @@ export default function Transformations({ data }) {
   const [isAutoSliding, setIsAutoSliding] = useState(true);
   const dragStartXRef = useRef(null);
   const autoSlideResumeTimeoutRef = useRef(null);
+  const [sectionRef, isInView] = useInView({ threshold: 0.1 });
 
   const filteredCards = useMemo(() => {
     if (activeFilter === "All") return data.cards;
@@ -37,14 +39,14 @@ export default function Transformations({ data }) {
   }, [maxIndex]);
 
   useEffect(() => {
-    if (maxIndex === 0 || !isAutoSliding) return undefined;
+    if (maxIndex === 0 || !isAutoSliding || !isInView) return undefined;
 
     const intervalId = window.setInterval(() => {
       setCurrentIndex((previousIndex) => (previousIndex >= maxIndex ? 0 : previousIndex + 1));
     }, 3500);
 
     return () => window.clearInterval(intervalId);
-  }, [isAutoSliding, maxIndex]);
+  }, [isAutoSliding, maxIndex, isInView]);
 
   useEffect(() => {
     return () => {
@@ -98,7 +100,7 @@ export default function Transformations({ data }) {
   );
 
   return (
-    <section className="transformations" id="transformations" aria-label="Transformations">
+    <section className="transformations" id="transformations" aria-label="Transformations" ref={sectionRef}>
       <div className="transformations-inner">
         <p className="transformations-badge">{data.badge}</p>
         <h2 className="transformations-title">

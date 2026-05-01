@@ -39,7 +39,7 @@ body.is-loader-active {
 .about-title {
   margin: 0;
   color: #27483f;
-  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
   line-height: 1.05;
   font-weight: 900;
 }
@@ -509,7 +509,7 @@ main {
 
 .hero-eyebrow {
   margin: 0;
-  font-size: clamp(1.6rem, 4.6vw, 4rem);
+  font-size: clamp(1.4rem, 3.5vw, 3rem);
   font-weight: 800;
   letter-spacing: 1px;
   line-height: 1.1;
@@ -517,7 +517,7 @@ main {
 
 .hero-title {
   margin: 6px 0 0;
-  font-size: clamp(1.6rem, 3.8vw, 3rem);
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
   font-weight: 700;
   line-height: 1.15;
   color: #98cb72;
@@ -715,7 +715,7 @@ main {
   margin: 0;
   max-width: 1125px;
   margin-inline: auto;
-  font-size: clamp(2.5rem, 4vw, 3.76rem);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
   line-height: 0.98;
   color: #27483f;
   font-weight: 700;
@@ -834,7 +834,7 @@ main {
   margin: 0;
   max-width: 1061px;
   margin-inline: auto;
-  font-size: clamp(2.5rem, 4vw, 3.76rem);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
   line-height: 0.98;
   color: #27483f;
   font-weight: 700;
@@ -1084,7 +1084,7 @@ main {
 
 .testimonials-title {
   margin: 0;
-  font-size: clamp(2.1rem, 4vw, 3.5rem);
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
   line-height: 1.1;
   color: #27483f;
   font-weight: 900;
@@ -1311,7 +1311,7 @@ main {
 
 .transformations-title {
   margin: 0;
-  font-size: clamp(2.1rem, 4vw, 3.5rem);
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
   line-height: 1.1;
   color: #27483f;
   font-weight: 950;
@@ -1563,7 +1563,7 @@ main {
 
 .transformations-cta-title {
   margin: 0;
-  font-size: clamp(2.1rem, 3.2vw, 2.9rem);
+  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
   line-height: 1.08;
   letter-spacing: -0.01em;
   font-family: "Lato", sans-serif;
@@ -1919,8 +1919,9 @@ main {
     transform: none;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: flex-start;
+    padding-bottom: 56px;
   }
 
   .hero-eyebrow {
@@ -1940,9 +1941,7 @@ main {
   }
 
   .slider-arrow {
-    font-size: 48px;
-    width: 34px;
-    height: 34px;
+    display: none;
   }
 
   .treat {
@@ -2307,7 +2306,7 @@ main {
     border-radius: 0;
     padding: 144px clamp(14px, 5vw, 22px) 12px;
     background-image: url("/contact-mobile-bg.png");
-    background-size: 100% 100%;
+    background-size: 100% auto;
     background-position: center top;
     background-repeat: no-repeat;
     display: block;
@@ -2424,7 +2423,7 @@ main {
 
 .offers-title {
   margin: 0;
-  font-size: clamp(2.1rem, 4vw, 3.5rem);
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
   line-height: 1.1;
   color: #27483f;
   font-weight: 950;
@@ -2514,7 +2513,7 @@ main {
       (100% - (var(--offers-gap) * (var(--offers-visible-count) - 1))) /
         var(--offers-visible-count)
     );
-  height: 510px;
+  min-height: 510px;
   display: flex;
   flex-direction: column;
   transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
@@ -2532,7 +2531,7 @@ main {
 
 .offer-img {
   width: 100%;
-  height: 378px;
+  height: 340px;
   object-fit: cover;
   border-radius: 12px;
   display: block;
@@ -2566,8 +2565,8 @@ main {
 .offer-actions {
   margin-top: auto;
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .offer-btn {
@@ -2575,12 +2574,14 @@ main {
   align-items: center;
   justify-content: center;
   min-height: 38px;
-  padding: 0 16px;
+  padding: 0 8px;
   border-radius: 10px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   text-decoration: none;
   transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  flex: 1;
+  white-space: nowrap;
 }
 
 .offer-btn:hover {
@@ -2681,7 +2682,7 @@ main {
 
 .bmi-title {
   margin: 0;
-  font-size: clamp(2.1rem, 4vw, 3.2rem);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
   line-height: 1.1;
   color: #27483f;
   font-weight: 950;
@@ -2727,7 +2728,7 @@ main {
 
 .bmi-card-title {
   margin: 0;
-  font-size: clamp(2rem, 3.2vw, 2.7rem);
+  font-size: clamp(1.5rem, 2.5vw, 2.1rem);
   line-height: 1.08;
   letter-spacing: -0.01em;
   font-weight: 900;
@@ -3202,7 +3203,7 @@ main {
 
 .blog-title {
   margin: 0;
-  font-size: clamp(2.1rem, 4vw, 3.2rem);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
   line-height: 1.1;
   color: #27483f;
   font-weight: 900;
@@ -3396,7 +3397,7 @@ main {
 
 .blogs-title {
   margin: 0;
-  font-size: clamp(2.1rem, 4vw, 3.2rem);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
   line-height: 1.1;
   color: #27483f;
   font-weight: 900;
@@ -3688,7 +3689,7 @@ main {
 
 .blogpost-title {
   margin: 18px 0 0;
-  font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
   line-height: 1.15;
   color: #2f3a36;
   font-weight: 900;
@@ -3753,7 +3754,7 @@ main {
 
 .faq-title {
   margin: 0;
-  font-size: clamp(2.1rem, 4vw, 3.2rem);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
   line-height: 1.1;
   color: #27483f;
   font-weight: 950;

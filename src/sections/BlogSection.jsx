@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useInView } from "../hooks/useInView";
 
 function getVisibleCount() {
   if (typeof window === "undefined") return 3;
@@ -15,6 +16,7 @@ export default function BlogSection({ data }) {
   const [isAutoSliding, setIsAutoSliding] = useState(true);
   const dragStartXRef = useRef(null);
   const autoSlideResumeTimeoutRef = useRef(null);
+  const [sectionRef, isInView] = useInView({ threshold: 0.1 });
 
   useEffect(() => {
     const handleResize = () => setVisibleCount(getVisibleCount());
@@ -29,14 +31,14 @@ export default function BlogSection({ data }) {
   }, [maxIndex]);
 
   useEffect(() => {
-    if (maxIndex === 0 || !isAutoSliding) return undefined;
+    if (maxIndex === 0 || !isAutoSliding || !isInView) return undefined;
 
     const intervalId = window.setInterval(() => {
       setCurrentIndex((previousIndex) => (previousIndex >= maxIndex ? 0 : previousIndex + 1));
     }, 3400);
 
     return () => window.clearInterval(intervalId);
-  }, [isAutoSliding, maxIndex]);
+  }, [isAutoSliding, maxIndex, isInView]);
 
   useEffect(() => {
     return () => {
@@ -90,7 +92,7 @@ export default function BlogSection({ data }) {
   );
 
   return (
-    <section className="blog" id="blogs" aria-label="From the blog">
+    <section className="blog" id="blogs" aria-label="From the blog" ref={sectionRef}>
       <div className="blog-inner">
         <div className="blog-head">
           <p className="blog-badge">{data.badge}</p>
