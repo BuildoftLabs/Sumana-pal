@@ -1,4 +1,36 @@
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
+
 export default function Testimonials({ data }) {
+  const [testimonials, setTestimonials] = useState(data.testimonials);
+  const [rating, setRating] = useState(data.rating);
+
+  useEffect(() => {
+    async function loadTestimonials() {
+      try {
+        const snap = await getDocs(collection(db, "reviews"));
+        const fetched = snap.docs.map(doc => {
+          const item = doc.data();
+          return {
+            name: item.name,
+            stars: item.stars || 5,
+            text: item.review,
+            avatar: { initials: item.name ? item.name[0] : "?", color: "var(--accent)", imageUrl: item.image || null }
+          };
+        });
+        
+        if (fetched.length > 0) {
+          setTestimonials(fetched);
+          const avg = fetched.reduce((acc, curr) => acc + curr.stars, 0) / fetched.length;
+          setRating({ value: avg, label: `${fetched.length}+ Reviews` });
+        }
+      } catch (err) {
+        console.error("Failed to fetch reviews", err);
+      }
+    }
+    loadTestimonials();
+  }, []);
   return (
     <section className="testimonials" id="testimonials" aria-label="Testimonials">
       <div className="testimonials-inner">
@@ -16,21 +48,25 @@ export default function Testimonials({ data }) {
           </div>
 
           <div className="rating-text">
-            <span className="rating-value">{data.rating.value.toFixed(1)}</span>
+            <span className="rating-value">{rating.value.toFixed(1)}</span>
             <span className="rating-star" aria-hidden="true">
               ★
             </span>
-            <span className="rating-label">({data.rating.label})</span>
+            <span className="rating-label">({rating.label})</span>
           </div>
         </div>
 
         <div className="testimonials-grid" role="list" aria-label="Customer testimonials">
-          {data.testimonials.map((t, idx) => (
+          {testimonials.map((t, idx) => (
             <article className="testimonial-card" role="listitem" key={`${t.name}-${idx}`}>
               <header className="testimonial-head">
-                <span className="testimonial-avatar" aria-hidden="true" style={{ background: t.avatar.color }}>
-                  {t.avatar.initials}
-                </span>
+                {t.avatar?.imageUrl ? (
+                  <img src={t.avatar.imageUrl} alt={t.name} className="testimonial-avatar" style={{ objectFit: 'cover' }} />
+                ) : (
+                  <span className="testimonial-avatar" aria-hidden="true" style={{ background: t.avatar?.color || "var(--accent)" }}>
+                    {t.avatar?.initials || "?"}
+                  </span>
+                )}
                 <div className="testimonial-meta">
                   <p className="testimonial-name">{t.name}</p>
                   <p className="testimonial-stars" aria-label={`${t.stars} out of 5 stars`}>

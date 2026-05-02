@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const heroTitles = ["Dietitian", "Nutritionist", "Diet Expert", "Nutritional Therapist"];
-const heroBanners = [
+const defaultHeroBanners = [
   {
     imageUrl: "/hero-image.png",
     imageAlt: "Dietitian Sumana Pal Roy sitting at her office desk"
@@ -15,6 +17,27 @@ const heroBanners = [
 export default function Hero() {
   const [titleIndex, setTitleIndex] = useState(0);
   const [bannerIndex, setBannerIndex] = useState(0);
+  const [heroBanners, setHeroBanners] = useState(defaultHeroBanners);
+
+  useEffect(() => {
+    async function loadHero() {
+      try {
+        const snap = await getDoc(doc(db, "sections", "hero"));
+        if (snap.exists() && snap.data().heroImage) {
+          setHeroBanners([
+            {
+              imageUrl: snap.data().heroImage,
+              imageAlt: "Dietitian Sumana Pal Roy"
+            },
+            ...defaultHeroBanners.slice(1)
+          ]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch hero", err);
+      }
+    }
+    loadHero();
+  }, []);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {

@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { useInView } from "../hooks/useInView";
 
@@ -11,6 +13,7 @@ function getVisibleCount() {
 
 export default function BlogSection({ data }) {
   const navigate = useNavigate();
+  const [cards, setCards] = useState(data.cards);
   const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoSliding, setIsAutoSliding] = useState(true);
@@ -24,7 +27,35 @@ export default function BlogSection({ data }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const maxIndex = Math.max(Math.ceil(data.cards.length - visibleCount), 0);
+  useEffect(() => {
+    async function loadBlogs() {
+      try {
+        const snap = await getDocs(collection(db, "blogs"));
+        const fetchedCards = snap.docs.map(doc => {
+          const item = doc.data();
+          return {
+            slug: item.slug,
+            title: item.headline,
+            subheading: item.description,
+            date: item.date ? new Date(item.date).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) : "",
+            readTime: item.readTime ? `${item.readTime} Read` : "5 Min Read",
+            category: item.category,
+            imageAlt: item.headline,
+            imageUrl: item.image || "https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?auto=format&fit=crop&w=900&q=80"
+          };
+        });
+        
+        fetchedCards.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        if (fetchedCards.length > 0) setCards(fetchedCards);
+      } catch (err) {
+        console.error("Failed to fetch blogs", err);
+      }
+    }
+    loadBlogs();
+  }, []);
+
+  const maxIndex = Math.max(Math.ceil(cards.length - visibleCount), 0);
 
   useEffect(() => {
     setCurrentIndex((previousIndex) => Math.min(previousIndex, maxIndex));
@@ -141,8 +172,8 @@ export default function BlogSection({ data }) {
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerLeave}
           >
-            {data.cards.map((card, idx) => (
-              <article className="blog-card" role="listitem" key={`${card.title}-${idx}`}>
+            {cards.map((card, idx) => (
+              <article className="blog-card" role="listitem" key={`${card.title}-${idx}`} onClick={() => navigate(`/blogs/${card.slug}`)} style={{cursor: "pointer"}}>
                 <img className="blog-card-img" src={card.imageUrl} alt={card.imageAlt} loading="lazy" />
                 <div className="blog-card-body">
                   <h3 className="blog-card-title">{card.title}</h3>

@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 import { useInView } from "../hooks/useInView";
 
 function getVisibleCount() {
@@ -9,6 +11,7 @@ function getVisibleCount() {
 }
 
 export default function Transformations({ data }) {
+  const [cards, setCards] = useState(data.cards);
   const [activeFilter, setActiveFilter] = useState(data.filters[0] ?? "All");
   const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,9 +21,39 @@ export default function Transformations({ data }) {
   const [sectionRef, isInView] = useInView({ threshold: 0.1 });
 
   const filteredCards = useMemo(() => {
-    if (activeFilter === "All") return data.cards;
-    return data.cards.filter((c) => c.category === activeFilter);
-  }, [activeFilter, data.cards]);
+    if (activeFilter === "All") return cards;
+    return cards.filter((c) => c.category === activeFilter);
+  }, [activeFilter, cards]);
+
+  useEffect(() => {
+    async function loadTransformations() {
+      try {
+        const snap = await getDocs(collection(db, "transformations"));
+        const fetchedCards = snap.docs.map(doc => {
+          const item = doc.data();
+          const chips = [];
+          if (item.weightLost) chips.push(`-${item.weightLost}`);
+          if (item.duration) chips.push(item.duration);
+          
+          return {
+            category: item.category || "Weight Loss",
+            beforeLabel: "Before",
+            afterLabel: "After",
+            beforeImageUrl: item.beforeImage || null,
+            afterImageUrl: item.afterImage || null,
+            person: `${item.name}${item.age ? `, ${item.age}` : ''} ${item.gender === 'female' ? 'F' : item.gender === 'male' ? 'M' : ''}`.trim(),
+            chips,
+            tag: item.category || "Weight Loss",
+            quote: item.testimonial ? `"${item.testimonial}"` : ""
+          };
+        });
+        if (fetchedCards.length > 0) setCards(fetchedCards);
+      } catch (err) {
+        console.error("Failed to fetch transformations", err);
+      }
+    }
+    loadTransformations();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setVisibleCount(getVisibleCount());

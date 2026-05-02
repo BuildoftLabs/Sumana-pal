@@ -1,8 +1,28 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function Faq({ data }) {
   const baseId = useId();
   const [openIndex, setOpenIndex] = useState(data.defaultOpenIndex ?? 0);
+  const [items, setItems] = useState(data.items);
+
+  useEffect(() => {
+    async function loadFaqs() {
+      try {
+        const q = query(collection(db, "faqs"), orderBy("order", "asc"));
+        const snap = await getDocs(q).catch(() => getDocs(collection(db, "faqs")));
+        const fetchedItems = snap.docs.map(doc => {
+          const d = doc.data();
+          return { q: d.headline, a: d.description };
+        });
+        if (fetchedItems.length > 0) setItems(fetchedItems);
+      } catch (err) {
+        console.error("Failed to fetch FAQs", err);
+      }
+    }
+    loadFaqs();
+  }, []);
 
   return (
     <section className="faq" id="faqs" aria-label="Frequently asked questions">
@@ -14,7 +34,7 @@ export default function Faq({ data }) {
         <p className="faq-desc">{data.description}</p>
 
         <div className="faq-list" role="list" aria-label="FAQ list">
-          {data.items.map((item, idx) => {
+          {items.map((item, idx) => {
             const isOpen = idx === openIndex;
             const panelId = `${baseId}-panel-${idx}`;
             const buttonId = `${baseId}-button-${idx}`;

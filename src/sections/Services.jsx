@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { db } from "../firebase";
 import { useInView } from "../hooks/useInView";
 
 function getVisibleCount() {
@@ -9,6 +11,7 @@ function getVisibleCount() {
 }
 
 export default function Services({ data }) {
+  const [cards, setCards] = useState(data.cards);
   const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoSliding, setIsAutoSliding] = useState(true);
@@ -19,6 +22,31 @@ export default function Services({ data }) {
   const [sectionRef, isInView] = useInView({ threshold: 0.1 });
 
   useEffect(() => {
+    async function loadCards() {
+      try {
+        const q = query(collection(db, "services"), orderBy("order", "asc"));
+        const snap = await getDocs(q);
+        const fetchedCards = snap.docs.map((doc) => {
+          const item = doc.data();
+          return {
+            title: item.category || "Uncategorised",
+            description: item.description,
+            imageAlt: item.category || "Service image",
+            imageUrl: item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+            badge: null,
+            primaryCta: { label: "Get This", href: `#get-${(item.category || "").toLowerCase().replace(/\s+/g, '-')}` },
+            secondaryCta: { label: "Know More", href: `#${(item.category || "").toLowerCase().replace(/\s+/g, '-')}` }
+          };
+        });
+        if (fetchedCards.length > 0) setCards(fetchedCards);
+      } catch (err) {
+        console.error("Failed to fetch services", err);
+      }
+    }
+    loadCards();
+  }, []);
+
+  useEffect(() => {
     const handleResize = () => {
       setVisibleCount(getVisibleCount());
     };
@@ -27,7 +55,7 @@ export default function Services({ data }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const maxIndex = Math.max(Math.ceil(data.cards.length - visibleCount), 0);
+  const maxIndex = Math.max(Math.ceil(cards.length - visibleCount), 0);
   const totalSteps = maxIndex + 1;
   const progressWidth = maxIndex <= 0 ? 100 : (currentIndex / maxIndex) * 100;
 
@@ -174,8 +202,8 @@ export default function Services({ data }) {
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerLeave}
           >
-            {data.cards.map((card) => (
-              <article className="service-card" role="listitem" key={card.title}>
+            {cards.map((card, index) => (
+              <article className="service-card" role="listitem" key={card.title + index}>
                 <div className="service-media">
                   <img className="service-img" src={card.imageUrl} alt={card.imageAlt} loading="lazy" />
                   {card.badge ? <span className="service-pill">{card.badge}</span> : null}

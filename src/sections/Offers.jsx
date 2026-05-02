@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { db } from "../firebase";
 import { useInView } from "../hooks/useInView";
 
 function getVisibleCount() {
@@ -10,6 +12,7 @@ function getVisibleCount() {
 
 export default function Offers({ data }) {
   const stripLoopItems = [...data.stripItems, ...data.stripItems];
+  const [cards, setCards] = useState(data.cards);
   const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoSliding, setIsAutoSliding] = useState(true);
@@ -23,7 +26,33 @@ export default function Offers({ data }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const maxIndex = Math.max(Math.ceil(data.cards.length - visibleCount), 0);
+  useEffect(() => {
+    async function loadOffers() {
+      try {
+        const q = query(collection(db, "offers"), orderBy("order", "asc"));
+        const snap = await getDocs(q);
+        const fetchedCards = snap.docs.map(doc => {
+          const item = doc.data();
+          if (!item.isActive) return null;
+          return {
+            title: item.headline,
+            subtitle: item.description,
+            imageAlt: item.headline,
+            imageUrl: item.image || "/offer-card.png",
+            badge: item.badge || null,
+            primaryCta: { label: "Grab This Offer", href: `#grab-offer-${doc.id}` },
+            secondaryCta: { label: "Know More", href: `#offer-${doc.id}` }
+          };
+        }).filter(Boolean);
+        if (fetchedCards.length > 0) setCards(fetchedCards);
+      } catch (err) {
+        console.error("Failed to fetch offers", err);
+      }
+    }
+    loadOffers();
+  }, []);
+
+  const maxIndex = Math.max(Math.ceil(cards.length - visibleCount), 0);
 
   useEffect(() => {
     setCurrentIndex((previousIndex) => Math.min(previousIndex, maxIndex));
@@ -142,7 +171,7 @@ export default function Offers({ data }) {
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerLeave}
           >
-            {data.cards.map((card, idx) => (
+            {cards.map((card, idx) => (
               <article className="offer-card" role="listitem" key={`${card.title}-${idx}`}>
                 <div className="offer-media">
                   <img className="offer-img" src={card.imageUrl} alt={card.imageAlt} loading="lazy" />
