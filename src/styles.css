@@ -2092,10 +2092,10 @@ main {
 .question-shell {
   margin: 18px auto 0;
   width: min(1380px, 100%);
-  background-color: #6a8b49;
-  background-image: url("/contact-left.png");
-  background-size: 100% calc(100% + 36px);
-  background-position: center top;
+  background-color: #0d5c8a;
+  background-image: url("/contact-desktop-new.png");
+  background-size: cover;
+  background-position: center center;
   background-repeat: no-repeat;
   border-radius: 22px;
   padding: clamp(16px, 2vw, 22px);
@@ -2116,10 +2116,10 @@ main {
   padding: clamp(18px, 3vw, 34px);
   color: #fff;
   min-height: 320px;
-  background-image: url("/contact-left.png");
-  background-color: #6f934f;
-  background-size: 100% 112%;
-  background-position: center top;
+  background-image: url("/contact-desktop-new.png");
+  background-color: #0d5c8a;
+  background-size: cover;
+  background-position: center center;
   background-repeat: no-repeat;
 }
 
@@ -2267,7 +2267,7 @@ main {
   min-height: 50px;
   border: none;
   border-radius: 12px;
-  background: #6a8b49;
+  background: #0d5c8a;
   color: #fff;
   font-size: 1.06rem;
   line-height: 1;
@@ -2281,7 +2281,7 @@ main {
 
 .question-submit:hover {
   transform: translateY(-1px);
-  background: #5f7f41;
+  background: #0a4f78;
 }
 
 @media (max-width: 900px) {
@@ -2305,8 +2305,8 @@ main {
     min-height: 770px;
     border-radius: 0;
     padding: 144px clamp(14px, 5vw, 22px) 12px;
-    background-image: url("/contact-mobile-bg.png");
-    background-size: 100% auto;
+    background-image: url("/contact-mobile-new.png");
+    background-size: cover;
     background-position: center top;
     background-repeat: no-repeat;
     display: block;
