@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   blogSection,
   bmiSection,
@@ -51,18 +52,21 @@ export default function HomePage({ scrollToSection = null }) {
     };
   }, [loaderStage]);
 
+  const location = useLocation();
+
   useEffect(() => {
     if (!scrollToSection) return;
     if (loaderStage !== "hidden") return;
+    if (location.state?.preventScroll) return;
 
     const scrollTimer = window.setTimeout(() => {
       const target = document.getElementById(scrollToSection);
       if (!target) return;
       target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 120);
+    }, 0);
 
     return () => window.clearTimeout(scrollTimer);
-  }, [loaderStage, scrollToSection]);
+  }, [loaderStage, scrollToSection, location.state]);
 
   useEffect(() => {
     if (loaderStage !== "hidden") return undefined;

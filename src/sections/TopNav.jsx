@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const navPathMap = {
   Home: "/",
@@ -7,13 +7,20 @@ const navPathMap = {
   Testimonial: "/testimonials",
   Offers: "/offers",
   "About me": "/about",
-  Blogs: "/blogs",
+  Blogs: "/blog-section",
   Contact: "/contact"
 };
 
 export default function TopNav({ navItems }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activePath, setActivePath] = useState(location.pathname);
+
+  useEffect(() => {
+    setActivePath(location.pathname);
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,11 +33,50 @@ export default function TopNav({ navItems }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    // Only track sections on the homepage
+    if (location.pathname === "/about" || location.pathname.startsWith("/blogs/")) return;
+
+    const sections = {
+      "home": "/",
+      "services": "/services",
+      "testimonials": "/testimonials",
+      "offers": "/offers",
+      "blogs": "/blog-section",
+      "contact": "/contact"
+    };
+
+    let currentActive = location.pathname;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const newPath = sections[entry.target.id];
+            if (newPath && newPath !== currentActive) {
+              currentActive = newPath;
+              setActivePath(newPath);
+              navigate(newPath, { replace: true, state: { preventScroll: true } });
+            }
+          }
+        });
+      },
+      { rootMargin: "-30% 0px -50% 0px" }
+    );
+
+    Object.keys(sections).forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [location.pathname, navigate]);
+
   return (
     <header className={`top-nav${isScrolled ? " is-scrolled" : ""}`} aria-label="Main navigation">
       <Link className="brand" to="/" aria-label="Sumona Pal home">
         <span className="brand-small">DIETITIAN</span>
-        <span className="brand-main">Sumona Pal</span>
+        <span className="brand-main">Sumana Pal Roy</span>
       </Link>
 
       <button
@@ -44,16 +90,20 @@ export default function TopNav({ navItems }) {
       </button>
 
       <nav className={`nav-menu${isOpen ? " is-open" : ""}`} aria-label="Primary">
-        {navItems.map((item) => (
-          <Link
-            key={item}
-            className={`nav-link${item === "Home" ? " is-active" : ""}`}
-            to={navPathMap[item] ?? "/"}
-            onClick={() => setIsOpen(false)}
-          >
-            {item}
-          </Link>
-        ))}
+        {navItems.map((item) => {
+          const itemPath = navPathMap[item] ?? "/";
+          const isActive = activePath === itemPath;
+          return (
+            <Link
+              key={item}
+              className={`nav-link${isActive ? " is-active" : ""}`}
+              to={itemPath}
+              onClick={() => setIsOpen(false)}
+            >
+              {item}
+            </Link>
+          );
+        })}
 
         <div className="nav-social" aria-label="Social links">
           <a className="nav-social-link" href="#" aria-label="Instagram">

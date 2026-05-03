@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import { useInView } from "../hooks/useInView";
+import { useNavigate } from "react-router-dom";
 
 function getVisibleCount() {
   if (typeof window === "undefined") return 3;
@@ -11,8 +12,10 @@ function getVisibleCount() {
 }
 
 export default function Transformations({ data }) {
+  const navigate = useNavigate();
   const [cards, setCards] = useState(data.cards);
-  const [activeFilter, setActiveFilter] = useState(data.filters[0] ?? "All");
+  const [dynamicFilters, setDynamicFilters] = useState(["All"]);
+  const [activeFilter, setActiveFilter] = useState("All");
   const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoSliding, setIsAutoSliding] = useState(true);
@@ -32,22 +35,26 @@ export default function Transformations({ data }) {
         const fetchedCards = snap.docs.map(doc => {
           const item = doc.data();
           const chips = [];
-          if (item.weightLost) chips.push(`-${item.weightLost}`);
+          if (item.weightLost) chips.push(item.weightLost);
           if (item.duration) chips.push(item.duration);
           
           return {
             category: item.category || "Weight Loss",
             beforeLabel: "Before",
             afterLabel: "After",
-            beforeImageUrl: item.beforeImage || null,
-            afterImageUrl: item.afterImage || null,
+            beforeImageUrl: item.beforeImageUrl || item.beforeImage || item.before || null,
+            afterImageUrl: item.afterImageUrl || item.afterImage || item.after || null,
             person: `${item.name}${item.age ? `, ${item.age}` : ''} ${item.gender === 'female' ? 'F' : item.gender === 'male' ? 'M' : ''}`.trim(),
             chips,
             tag: item.category || "Weight Loss",
             quote: item.testimonial ? `"${item.testimonial}"` : ""
           };
         });
-        if (fetchedCards.length > 0) setCards(fetchedCards);
+        if (fetchedCards.length > 0) {
+          setCards(fetchedCards);
+          const uniqueCategories = [...new Set(fetchedCards.map(c => c.category))];
+          setDynamicFilters(["All", ...uniqueCategories]);
+        }
       } catch (err) {
         console.error("Failed to fetch transformations", err);
       }
@@ -142,7 +149,7 @@ export default function Transformations({ data }) {
         <p className="transformations-desc">{data.description}</p>
 
         <div className="transformations-filters" role="tablist" aria-label="Transformation filters">
-          {data.filters.map((f) => (
+          {dynamicFilters.map((f) => (
             <button
               key={f}
               type="button"
@@ -202,18 +209,17 @@ export default function Transformations({ data }) {
                 </div>
 
                 <div className="transformation-body">
-                  <div className="transformation-meta">
-                    <p className="transformation-person">{c.person}</p>
-                    <div className="transformation-tag">{c.tag}</div>
-                  </div>
+                  <p className="transformation-person">{c.person}</p>
 
                   <div className="transformation-chips" aria-label="Result highlights">
-                  {c.chips.map((chip, chipIndex) => (
-                    <span className={`chip${chipIndex === 0 ? " chip-filled" : ""}`} key={chip}>
+                    {c.chips.map((chip, chipIndex) => (
+                      <span className={`chip${chipIndex === 0 ? " chip-filled" : ""}`} key={chip}>
                         {chip}
                       </span>
                     ))}
                   </div>
+
+                  <div className="transformation-tag">{c.tag}</div>
 
                   <p className="transformation-quote">{c.quote}</p>
                 </div>
@@ -226,12 +232,16 @@ export default function Transformations({ data }) {
           <h3 className="transformations-cta-title">{data.cta.title}</h3>
           <p className="transformations-cta-sub">{data.cta.subtitle}</p>
           <div className="transformations-cta-actions">
-            <a className="cta-btn cta-btn-primary" href={data.cta.primary.href}>
+            <a className="cta-btn cta-btn-primary" href={data.cta.primary.href} target="_blank" rel="noreferrer">
               {data.cta.primary.label} <span aria-hidden="true">→</span>
             </a>
-            <a className="cta-btn cta-btn-outline" href={data.cta.secondary.href}>
+            <button
+              type="button"
+              className="cta-btn cta-btn-outline"
+              onClick={() => navigate(data.cta.secondary.href)}
+            >
               {data.cta.secondary.label}
-            </a>
+            </button>
           </div>
         </div>
       </div>

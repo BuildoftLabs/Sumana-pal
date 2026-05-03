@@ -205,10 +205,16 @@ export default function BmiTool({ data }) {
           ) : (
             <aside className="bmi-art" aria-label="BMI info illustration">
               <img
-                className="bmi-art-img"
-                src="/bmi-side.png"
+                className="bmi-art-img bmi-art-desktop"
+                src="/bmi-side-desktop.png"
                 alt="Fill in your details and click Calculate BMI to see your result."
-                loading="lazy"
+                loading="eager"
+              />
+              <img
+                className="bmi-art-img bmi-art-mobile"
+                src="/bmi-side-mobile.png"
+                alt="Fill in your details and click Calculate BMI to see your result."
+                loading="eager"
               />
             </aside>
           )}
