@@ -122,7 +122,7 @@ export const servicesSection = {
         "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
       badge: null,
       primaryCta: { label: "Get This", href: "#get-kids-nutrition" },
-      secondaryCta: { label: "Know More", href: "#kids-nutrition" }
+      secondaryCta: { label: "Know More", href: "/services/kids-nutrition" }
     },
     {
       title: "Weight Loss",
@@ -133,7 +133,7 @@ export const servicesSection = {
         "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80",
       badge: "Most Enquired",
       primaryCta: { label: "Get This", href: "#get-weight-loss" },
-      secondaryCta: { label: "Know More", href: "#weight-loss" }
+      secondaryCta: { label: "Know More", href: "/services/weight-loss" }
     },
     {
       title: "Sports Nutrition",
@@ -144,7 +144,7 @@ export const servicesSection = {
         "https://images.unsplash.com/photo-1520975693411-bc2d1a9a9a65?auto=format&fit=crop&w=900&q=80",
       badge: null,
       primaryCta: { label: "Get This", href: "#get-sports-nutrition" },
-      secondaryCta: { label: "Know More", href: "#sports-nutrition" }
+      secondaryCta: { label: "Know More", href: "/services/sports-nutrition" }
     },
     {
       title: "PCOS Care",
@@ -155,7 +155,7 @@ export const servicesSection = {
         "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=80",
       badge: null,
       primaryCta: { label: "Get This", href: "#get-pcos-care" },
-      secondaryCta: { label: "Know More", href: "#pcos-care" }
+      secondaryCta: { label: "Know More", href: "/services/pcod-treatment" }
     },
     {
       title: "Diabetes Management",
@@ -166,7 +166,7 @@ export const servicesSection = {
         "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?auto=format&fit=crop&w=900&q=80",
       badge: "Popular",
       primaryCta: { label: "Get This", href: "#get-diabetes-management" },
-      secondaryCta: { label: "Know More", href: "#diabetes-management" }
+      secondaryCta: { label: "Know More", href: "/services/diabetes-management" }
     },
     {
       title: "Prenatal Nutrition",
@@ -177,7 +177,7 @@ export const servicesSection = {
         "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=900&q=80",
       badge: null,
       primaryCta: { label: "Get This", href: "#get-prenatal-nutrition" },
-      secondaryCta: { label: "Know More", href: "#prenatal-nutrition" }
+      secondaryCta: { label: "Know More", href: "/services/prenatal-nutrition" }
     },
     {
       title: "Thyroid Support",
@@ -188,7 +188,7 @@ export const servicesSection = {
         "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=900&q=80",
       badge: null,
       primaryCta: { label: "Get This", href: "#get-thyroid-support" },
-      secondaryCta: { label: "Know More", href: "#thyroid-support" }
+      secondaryCta: { label: "Know More", href: "/services/thyroid-management" }
     }
   ]
 };
@@ -232,7 +232,7 @@ export const testimonialsSection = {
     title: "Don't just take our word for it.",
     subtitle: "Read every review, unfiltered, directly on Google.",
     buttonLabel: "See All Google Reviews",
-    buttonHref: "#google-reviews"
+    buttonHref: "https://share.google/hOgq3Gaq9ok86Sot4"
   }
 };
 

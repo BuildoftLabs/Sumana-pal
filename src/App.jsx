@@ -5,6 +5,7 @@ import BlogsPage from "./pages/BlogsPage";
 import HomePage from "./pages/HomePage";
 import AllTransformationsPage from "./pages/AllTransformationsPage";
 import OfferPage from "./pages/OfferPage";
+import ServicePage from "./pages/ServicePage";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/blogs" element={<BlogsPage />} />
       <Route path="/blogs/:slug" element={<BlogPostPage />} />
       <Route path="/offers/:id" element={<OfferPage />} />
+      <Route path="/services/:slug" element={<ServicePage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/transformations" element={<AllTransformationsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />

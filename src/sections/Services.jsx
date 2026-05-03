@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { Link } from "react-router-dom";
 import { db } from "../firebase";
 import { useInView } from "../hooks/useInView";
 
@@ -8,6 +9,23 @@ function getVisibleCount() {
   if (window.innerWidth <= 580) return 1.35;
   if (window.innerWidth <= 900) return 2;
   return 3;
+}
+
+// Map Firestore category names → service page slugs
+const SLUG_MAP = {
+  "PCOD/PCOS": "pcod-treatment",
+  "PCOD": "pcod-treatment",
+  "PCOS": "pcod-treatment",
+  "Weight Loss": "weight-loss",
+  "Thyroid": "thyroid-management",
+  "Diabetes": "diabetes-management",
+};
+
+function getCategorySlug(category) {
+  if (!category) return null;
+  if (SLUG_MAP[category]) return SLUG_MAP[category];
+  // Fallback: lowercase + hyphenate
+  return category.toLowerCase().replace(/\s+/g, "-");
 }
 
 export default function Services({ data }) {
@@ -28,6 +46,7 @@ export default function Services({ data }) {
         const snap = await getDocs(q);
         const fetchedCards = snap.docs.map((doc) => {
           const item = doc.data();
+          const slug = getCategorySlug(item.category);
           return {
             title: item.category || "Uncategorised",
             description: item.description,
@@ -35,7 +54,7 @@ export default function Services({ data }) {
             imageUrl: item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
             badge: null,
             primaryCta: { label: "Get This", href: `#get-${(item.category || "").toLowerCase().replace(/\s+/g, '-')}` },
-            secondaryCta: { label: "Know More", href: `#${(item.category || "").toLowerCase().replace(/\s+/g, '-')}` }
+            secondaryCta: { label: "Know More", href: slug ? `/services/${slug}` : "#services" }
           };
         });
         if (fetchedCards.length > 0) setCards(fetchedCards);
@@ -217,9 +236,9 @@ export default function Services({ data }) {
                     <a className="service-btn service-btn-primary" href={card.primaryCta.href}>
                       {card.primaryCta.label}
                     </a>
-                    <a className="service-btn service-btn-outline" href={card.secondaryCta.href}>
+                    <Link className="service-btn service-btn-outline" to={card.secondaryCta.href}>
                       {card.secondaryCta.label} <span aria-hidden="true">→</span>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </article>

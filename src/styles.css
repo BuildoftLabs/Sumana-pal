@@ -119,7 +119,7 @@ body.is-loader-active {
   inset: 0;
   display: grid;
   place-items: center;
-  background: #203d35;
+  background: #002e4f;
   transition: transform 1.05s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
@@ -142,7 +142,7 @@ body.is-loader-active {
   font-weight: 400;
   letter-spacing: 0;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.8);
+  color: #7ed0df;
 }
 
 .intro-loader-name {
@@ -163,7 +163,7 @@ body.is-loader-active {
   width: 100%;
   height: 7px;
   border-radius: 999px;
-  background: rgba(198, 229, 118, 0.28);
+  background: rgba(126, 208, 223, 0.25);
   overflow: hidden;
 }
 
@@ -172,7 +172,7 @@ body.is-loader-active {
   width: 0;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #f26f3f 0%, #f6a94d 30%, #c6e576 100%);
+  background: linear-gradient(90deg, #f26f3f 0%, #f6a94d 50%, #7ed0df 100%);
   animation: loader-progress 2.1s ease forwards;
 }
 
@@ -289,7 +289,7 @@ body.is-loader-active {
   min-height: 56px;
   border: none;
   border-radius: 14px;
-  background: #6a8b49;
+  background: #002e4f;
   color: #fff;
   font-family: inherit;
   font-size: 1.65rem;
@@ -781,11 +781,12 @@ main {
 }
 
 .treat-icon {
-  width: 165px;
-  height: 115px;
+  width: 100%;
+  height: 180px;
   color: #234f43;
   display: grid;
   place-items: center;
+  overflow: hidden;
 }
 
 .treat-icon svg {
@@ -794,10 +795,12 @@ main {
 }
 
 .treat-icon-img {
-  width: 165px;
-  height: 115px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   display: block;
+  transform: scale(1.15);
+  transition: transform 0.2s ease;
 }
 
 .treat-card-title {
@@ -1028,7 +1031,7 @@ main {
 .services-progress {
   height: 10px;
   border-radius: 999px;
-  background: rgba(39, 72, 63, 0.12);
+  background: rgba(0, 46, 79, 0.12);
   overflow: hidden;
   width: min(1120px, 100%);
   margin: 18px auto 0;
@@ -1041,7 +1044,7 @@ main {
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #234f43, #a6d96e);
+  background: linear-gradient(90deg, #09558b, #7ed0df);
 }
 
 .services-progress-thumb {
@@ -1050,14 +1053,14 @@ main {
   width: 18px;
   height: 18px;
   border-radius: 999px;
-  background: #234f43;
-  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.16);
+  background: #002e4f;
+  box-shadow: 0 10px 18px rgba(0, 46, 79, 0.2);
   transform: translate(-50%, -50%);
   border: 2px solid rgba(255, 255, 255, 0.9);
 }
 
 .services-progress:focus-visible {
-  outline: 3px solid rgba(60, 125, 96, 0.35);
+  outline: 3px solid rgba(9, 85, 139, 0.35);
   outline-offset: 4px;
 }
 
@@ -1164,19 +1167,20 @@ main {
 
 .testimonial-card {
   border-radius: 12px;
-  border: 1.5px solid rgba(39, 72, 63, 0.2);
+  border: 1.5px solid rgba(9, 85, 139, 0.15);
   background: #fff;
-  padding: 18px 16px 20px;
-  min-height: 390px;
+  padding: 20px 18px 22px;
   text-align: left;
-  box-shadow: 0 12px 24px rgba(25, 55, 48, 0.06);
+  box-shadow: 0 12px 24px rgba(9, 85, 139, 0.06);
   transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .testimonial-card:hover {
   transform: translateY(-8px) scale(1.008);
-  border-color: #6a8b49;
-  box-shadow: 0 22px 34px rgba(25, 55, 48, 0.14);
+  border-color: #09558b;
+  box-shadow: 0 22px 34px rgba(9, 85, 139, 0.14);
 }
 
 .testimonial-head {
@@ -1186,13 +1190,15 @@ main {
 }
 
 .testimonial-avatar {
-  width: 34px;
-  height: 34px;
+  width: 52px;
+  height: 52px;
   border-radius: 999px;
   display: grid;
   place-items: center;
   color: #fff;
   font-weight: 950;
+  font-size: 1.2rem;
+  flex-shrink: 0;
 }
 
 .testimonial-meta {
@@ -1202,9 +1208,9 @@ main {
 
 .testimonial-name {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 900;
-  color: #27483f;
+  color: #002e4f;
 }
 
 .testimonial-stars {
@@ -1215,17 +1221,43 @@ main {
 }
 
 .testimonial-text {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: rgba(0, 46, 79, 0.75);
+  flex: 1;
+}
+
+.testimonial-text-collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.testimonial-read-more {
+  background: none;
+  border: none;
+  color: #09558b;
   font-size: 0.85rem;
-  line-height: 1.45;
-  color: rgba(39, 72, 63, 0.75);
+  font-weight: 800;
+  cursor: pointer;
+  padding: 6px 0 0;
+  text-align: left;
+  align-self: flex-start;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.testimonial-read-more:hover {
+  color: #002e4f;
 }
 
 .testimonials-cta {
   margin: 22px auto 0;
   width: min(1120px, 100%);
   border-radius: 14px;
-  background: #688f4e;
+  background: #002e4f;
   color: #fff;
   min-height: 130px;
   padding: 24px 24px;
@@ -2030,9 +2062,12 @@ main {
     gap: clamp(12px, 3.5vw, 18px);
   }
 
-  .treat-icon,
-  .treat-icon svg,
-  .treat-icon-img {
+  .treat-icon {
+    width: 100%;
+    height: clamp(130px, 35vw, 150px);
+  }
+
+  .treat-icon svg {
     width: clamp(96px, 28vw, 118px);
     height: clamp(78px, 22vw, 92px);
   }
@@ -4549,4 +4584,21 @@ main {
 .transformation-person-row .transformation-person {
   margin: 0;
   flex: 1;
+}
+
+/* --- Global Section Badge Styling --- */
+.treat-badge,
+.services-badge,
+.testimonials-badge,
+.transformations-badge,
+.question-badge,
+.offers-badge,
+.bmi-badge,
+.blog-badge,
+.blogs-badge,
+.faq-badge {
+  border: 1.5px solid rgba(9, 85, 139, 0.25) !important;
+  background: linear-gradient(135deg, rgba(9, 85, 139, 0.05), rgba(9, 85, 139, 0.15)) !important;
+  color: #09558b !important;
+  font-family: "Lato", sans-serif !important;
 }

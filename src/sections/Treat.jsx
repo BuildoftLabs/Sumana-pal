@@ -15,12 +15,11 @@ export default function Treat({ data }) {
             <article className="treat-card" role="listitem" key={card.title}>
               <div className="treat-icon" aria-hidden="true">
                 {card.iconUrl ? (
-                  <img className="treat-icon-img" src={card.iconUrl} alt="" loading="lazy" />
+                  <img className="treat-icon-img" src={card.iconUrl} alt={card.title} loading="lazy" />
                 ) : (
                   card.icon
                 )}
               </div>
-              <h3 className="treat-card-title">{card.title}</h3>
             </article>
           ))}
         </div>

@@ -5,6 +5,7 @@ import { db } from "../firebase";
 export default function Testimonials({ data }) {
   const [testimonials, setTestimonials] = useState(data.testimonials);
   const [rating, setRating] = useState(data.rating);
+  const [expandedCards, setExpandedCards] = useState({});
 
   useEffect(() => {
     async function loadTestimonials() {
@@ -57,27 +58,42 @@ export default function Testimonials({ data }) {
         </div>
 
         <div className="testimonials-grid" role="list" aria-label="Customer testimonials">
-          {testimonials.map((t, idx) => (
-            <article className="testimonial-card" role="listitem" key={`${t.name}-${idx}`}>
-              <header className="testimonial-head">
-                {t.avatar?.imageUrl ? (
-                  <img src={t.avatar.imageUrl} alt={t.name} className="testimonial-avatar" style={{ objectFit: 'cover' }} />
-                ) : (
-                  <span className="testimonial-avatar" aria-hidden="true" style={{ background: t.avatar?.color || "var(--accent)" }}>
-                    {t.avatar?.initials || "?"}
-                  </span>
-                )}
-                <div className="testimonial-meta">
-                  <p className="testimonial-name">{t.name}</p>
-                  <p className="testimonial-stars" aria-label={`${t.stars} out of 5 stars`}>
-                    {"★".repeat(t.stars)}
-                  </p>
-                </div>
-              </header>
+          {testimonials.map((t, idx) => {
+            const CHAR_LIMIT = 320;
+            const isLong = t.text && t.text.length > CHAR_LIMIT;
+            const isExpanded = expandedCards[idx];
+            return (
+              <article className="testimonial-card" role="listitem" key={`${t.name}-${idx}`}>
+                <header className="testimonial-head">
+                  {t.avatar?.imageUrl ? (
+                    <img src={t.avatar.imageUrl} alt={t.name} className="testimonial-avatar" style={{ objectFit: 'cover' }} />
+                  ) : (
+                    <span className="testimonial-avatar" aria-hidden="true" style={{ background: t.avatar?.color || "var(--accent)" }}>
+                      {t.avatar?.initials || "?"}
+                    </span>
+                  )}
+                  <div className="testimonial-meta">
+                    <p className="testimonial-name">{t.name}</p>
+                    <p className="testimonial-stars" aria-label={`${t.stars} out of 5 stars`}>
+                      {"★".repeat(t.stars)}
+                    </p>
+                  </div>
+                </header>
 
-              <p className="testimonial-text">{t.text}</p>
-            </article>
-          ))}
+                <p className={`testimonial-text${isLong && !isExpanded ? " testimonial-text-collapsed" : ""}`}>
+                  {t.text}
+                </p>
+                {isLong && (
+                  <button
+                    className="testimonial-read-more"
+                    onClick={() => setExpandedCards(prev => ({ ...prev, [idx]: !isExpanded }))}
+                  >
+                    {isExpanded ? "Show Less ↑" : "Read More ↓"}
+                  </button>
+                )}
+              </article>
+            );
+          })}
         </div>
 
         <div className="testimonials-cta">
@@ -85,7 +101,7 @@ export default function Testimonials({ data }) {
             <p className="testimonials-cta-title">{data.ctaBar.title}</p>
             <p className="testimonials-cta-sub">{data.ctaBar.subtitle}</p>
           </div>
-          <a className="google-btn" href={data.ctaBar.buttonHref}>
+          <a className="google-btn" href={data.ctaBar.buttonHref} target="_blank" rel="noreferrer">
             <span className="google-logo" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false">
                 <path

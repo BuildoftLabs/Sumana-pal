@@ -3,14 +3,12 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 const heroTitles = ["Dietitian", "Nutritionist", "Diet Expert", "Nutritional Therapist"];
+
+// Only ONE local fallback — the main hero image
 const defaultHeroBanners = [
   {
     imageUrl: "/hero-image.png",
     imageAlt: "Dietitian Sumana Pal Roy sitting at her office desk"
-  },
-  {
-    imageUrl: "/hero-banner-2.png",
-    imageAlt: "Sumana Pal Roy standing beside a nutrition conference banner"
   }
 ];
 
@@ -23,14 +21,23 @@ export default function Hero() {
     async function loadHero() {
       try {
         const snap = await getDoc(doc(db, "sections", "hero"));
-        if (snap.exists() && snap.data().heroImage) {
-          setHeroBanners([
-            {
-              imageUrl: snap.data().heroImage,
-              imageAlt: "Dietitian Sumana Pal Roy"
-            },
-            ...defaultHeroBanners.slice(1)
-          ]);
+        if (snap.exists()) {
+          const data = snap.data();
+          const banners = [];
+
+          // Support multiple images array OR single heroImage field
+          if (Array.isArray(data.heroImages) && data.heroImages.length > 0) {
+            data.heroImages.forEach((url, i) => {
+              banners.push({ imageUrl: url, imageAlt: `Dietitian Sumana Pal Roy - slide ${i + 1}` });
+            });
+          } else if (data.heroImage) {
+            banners.push({ imageUrl: data.heroImage, imageAlt: "Dietitian Sumana Pal Roy" });
+          }
+
+          if (banners.length > 0) {
+            setHeroBanners(banners);
+          }
+          // else: keep the local fallback (defaultHeroBanners)
         }
       } catch (err) {
         console.error("Failed to fetch hero", err);
@@ -47,20 +54,22 @@ export default function Hero() {
     return () => window.clearInterval(intervalId);
   }, []);
 
+  // Only auto-slide if there are multiple banners
   useEffect(() => {
+    if (heroBanners.length <= 1) return undefined;
+
     const intervalId = window.setInterval(() => {
       setBannerIndex((currentIndex) => (currentIndex + 1) % heroBanners.length);
     }, 5000);
 
     return () => window.clearInterval(intervalId);
-  }, []);
+  }, [heroBanners]);
 
   const moveBanner = (direction) => {
     setBannerIndex((currentIndex) => {
       if (direction === "prev") {
         return currentIndex <= 0 ? heroBanners.length - 1 : currentIndex - 1;
       }
-
       return (currentIndex + 1) % heroBanners.length;
     });
   };
@@ -94,23 +103,27 @@ export default function Hero() {
         </div>
       </div>
 
-      <button
-        className="slider-arrow slider-arrow-left"
-        type="button"
-        aria-label="Previous banner"
-        onClick={() => moveBanner("prev")}
-      >
-        &#8249;
-      </button>
-      <button
-        className="slider-arrow slider-arrow-right"
-        type="button"
-        aria-label="Next banner"
-        onClick={() => moveBanner("next")}
-      >
-        &#8250;
-      </button>
+      {/* Only show arrows if there are multiple banners */}
+      {heroBanners.length > 1 && (
+        <>
+          <button
+            className="slider-arrow slider-arrow-left"
+            type="button"
+            aria-label="Previous banner"
+            onClick={() => moveBanner("prev")}
+          >
+            &#8249;
+          </button>
+          <button
+            className="slider-arrow slider-arrow-right"
+            type="button"
+            aria-label="Next banner"
+            onClick={() => moveBanner("next")}
+          >
+            &#8250;
+          </button>
+        </>
+      )}
     </section>
   );
 }
-
