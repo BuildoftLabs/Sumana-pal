@@ -1,4 +1,6 @@
 import { useId, useState } from "react";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import { buildWhatsAppHref } from "../components/WhatsAppFab";
 
 export default function QuestionForm({ data }) {
@@ -11,20 +13,49 @@ export default function QuestionForm({ data }) {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [question, setQuestion] = useState("");
+  const [medicalConcern, setMedicalConcern] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const medicalConcernId = useId();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    const message = [
-      "Hi! I want to enquire about your nutrition plans.",
-      "",
-      `Name: ${name || "-"}`,
-      `Phone: ${phone || "-"}`,
-      `Email: ${email || "-"}`,
-      `Question: ${question || "-"}`
-    ].join("\n");
+    try {
+      await addDoc(collection(db, "leads"), {
+        name,
+        phone,
+        email,
+        message: question,
+        medicalConditions: medicalConcern,
+        formSource: "Contact Form",
+        status: "New",
+        createdAt: new Date().toISOString()
+      });
 
-    window.open(buildWhatsAppHref(message), "_blank", "noopener,noreferrer");
+      const message = [
+        "Hi! I want to enquire about your nutrition plans.",
+        "",
+        `Name: ${name || "-"}`,
+        `Phone: ${phone || "-"}`,
+        `Email: ${email || "-"}`,
+        `Medical Concern: ${medicalConcern || "-"}`,
+        `Question: ${question || "-"}`
+      ].join("\n");
+
+      window.open(buildWhatsAppHref(message), "_blank", "noopener,noreferrer");
+
+      setName("");
+      setPhone("");
+      setEmail("");
+      setQuestion("");
+      setMedicalConcern("");
+    } catch (error) {
+      console.error("Error saving lead: ", error);
+      alert("Failed to submit. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -90,6 +121,20 @@ export default function QuestionForm({ data }) {
 
             <label className="field">
               <span className="field-label">
+                Medical Concern
+              </span>
+              <input
+                className="field-input"
+                id={medicalConcernId}
+                type="text"
+                placeholder="Any medical concerns? (Optional)"
+                value={medicalConcern}
+                onChange={(e) => setMedicalConcern(e.target.value)}
+              />
+            </label>
+
+            <label className="field">
+              <span className="field-label">
                 {data.form.fields.question.label}{" "}
                 {data.form.fields.question.required ? <span className="req">*</span> : null}
               </span>
@@ -104,8 +149,8 @@ export default function QuestionForm({ data }) {
               />
             </label>
 
-            <button className="question-submit" type="submit">
-              {data.form.buttonLabel}
+            <button className="question-submit" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit"}
             </button>
           </form>
         </div>
