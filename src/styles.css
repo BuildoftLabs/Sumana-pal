@@ -2305,7 +2305,7 @@ main {
     min-height: 770px;
     border-radius: 0;
     padding: 144px clamp(14px, 5vw, 22px) 12px;
-    background-image: url("/contact-mobile-new.png");
+    background-image: url("/contact-mobile-v3.png");
     background-size: cover;
     background-position: center top;
     background-repeat: no-repeat;
