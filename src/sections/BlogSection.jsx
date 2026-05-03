@@ -13,7 +13,8 @@ function getVisibleCount() {
 
 export default function BlogSection({ data }) {
   const navigate = useNavigate();
-  const [cards, setCards] = useState(data.cards);
+  const [cards, setCards] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoSliding, setIsAutoSliding] = useState(true);
@@ -34,7 +35,8 @@ export default function BlogSection({ data }) {
         const fetchedCards = snap.docs.map(doc => {
           const item = doc.data();
           return {
-            slug: item.slug,
+            id: doc.id,
+            slug: item.slug || doc.id,
             title: item.headline,
             subheading: item.description,
             date: item.date ? new Date(item.date).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) : "",
@@ -55,7 +57,21 @@ export default function BlogSection({ data }) {
     loadBlogs();
   }, []);
 
-  const maxIndex = Math.max(Math.ceil(cards.length - visibleCount), 0);
+  const categories = useMemo(() => {
+    const cats = new Set(cards.map(c => c.category).filter(Boolean));
+    return ["All", ...Array.from(cats)];
+  }, [cards]);
+
+  const filteredCards = useMemo(() => {
+    if (selectedCategory === "All") return cards;
+    return cards.filter(c => c.category === selectedCategory);
+  }, [cards, selectedCategory]);
+
+  const maxIndex = Math.max(Math.ceil(filteredCards.length - visibleCount), 0);
+
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [selectedCategory]);
 
   useEffect(() => {
     setCurrentIndex((previousIndex) => Math.min(previousIndex, maxIndex));
@@ -127,22 +143,25 @@ export default function BlogSection({ data }) {
       <div className="blog-inner">
         <div className="blog-head">
           <p className="blog-badge">{data.badge}</p>
-          <button
-            className="blog-viewall"
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              navigate("/blogs");
-            }}
-          >
-            View all <span aria-hidden="true">→</span>
-          </button>
         </div>
         <h2 className="blog-title">
           {data.titlePrefix} <span className="blog-title-accent">{data.titleAccent}</span>
         </h2>
         <p className="blog-desc">{data.description}</p>
+
+        <div className="transformations-filters" role="tablist" aria-label="Blog filters" style={{ marginTop: '24px', justifyContent: 'center' }}>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              role="tab"
+              aria-selected={selectedCategory === cat}
+              className={`filter-pill${selectedCategory === cat ? " is-active" : ""}`}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
 
         <div className="blog-carousel" style={carouselStyle}>
           <div className="blog-carousel-controls" aria-label="Blog carousel controls">
@@ -172,10 +191,11 @@ export default function BlogSection({ data }) {
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerLeave}
           >
-            {cards.map((card, idx) => (
-              <article className="blog-card" role="listitem" key={`${card.title}-${idx}`} onClick={() => navigate(`/blogs/${card.slug}`)} style={{cursor: "pointer"}}>
+            {filteredCards.map((card, idx) => (
+              <article className="blog-card" role="listitem" key={`${card.id || card.slug}-${idx}`} onClick={() => navigate(`/blogs/${card.slug}`)} style={{cursor: "pointer"}}>
                 <img className="blog-card-img" src={card.imageUrl} alt={card.imageAlt} loading="lazy" />
                 <div className="blog-card-body">
+                  <span className="transformation-tag" style={{ marginTop: '10px', marginBottom: '10px' }}>{card.category || "General"}</span>
                   <h3 className="blog-card-title">{card.title}</h3>
                   <p className="blog-card-date">{card.date}</p>
                   <button type="button" className="blog-card-read">
@@ -186,6 +206,30 @@ export default function BlogSection({ data }) {
             ))}
           </div>
         </div>
+
+        <button
+          className="blog-viewall-bottom"
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            navigate("/blogs");
+          }}
+          style={{
+            marginTop: '40px',
+            background: '#f26f3f',
+            color: '#fff',
+            border: 'none',
+            padding: '12px 28px',
+            borderRadius: '12px',
+            fontSize: '1.05rem',
+            fontWeight: '700',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(242, 111, 63, 0.3)'
+          }}
+        >
+          View all blogs <span aria-hidden="true">→</span>
+        </button>
       </div>
     </section>
   );
