@@ -1391,9 +1391,9 @@ main {
   width: 38px;
   height: 38px;
   border-radius: 999px;
-  border: 1px solid rgba(39, 72, 63, 0.2);
+  border: 1px solid rgba(9, 85, 139, 0.2);
   background: rgba(255, 255, 255, 0.95);
-  color: #27483f;
+  color: #002e4f;
   font-size: 1.25rem;
   line-height: 1;
   cursor: pointer;
@@ -2414,7 +2414,7 @@ main {
 
 .offers-strip {
   width: 100%;
-  background: #2f5855;
+  background: #09558b;
   color: #ffffff;
   font-weight: 900;
   letter-spacing: 0.04em;
@@ -2454,7 +2454,7 @@ main {
 }
 
 .offers-diamond {
-  color: #64a2ad;
+  color: #7cd7e8;
   font-size: 1rem;
 }
 
@@ -2481,9 +2481,9 @@ main {
   justify-content: center;
   padding: 8px 18px;
   border-radius: 999px;
-  border: 1.5px solid rgba(34, 79, 67, 0.18);
-  background: rgba(166, 217, 110, 0.18);
-  color: #234f43;
+  border: 1.5px solid rgba(186, 230, 253, 0.6);
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0369a1;
   font-weight: 700;
 }
 
@@ -2491,7 +2491,7 @@ main {
   margin: 0;
   font-size: clamp(1.6rem, 3vw, 2.6rem);
   line-height: 1.1;
-  color: #27483f;
+  color: #002e4f;
   font-weight: 950;
 }
 
@@ -2504,7 +2504,7 @@ main {
   max-width: 820px;
   font-size: clamp(1rem, 1.5vw, 1.15rem);
   line-height: 1.6;
-  color: rgba(39, 72, 63, 0.65);
+  color: rgba(0, 46, 79, 0.65);
   font-weight: 600;
 }
 
@@ -2570,9 +2570,9 @@ main {
 .offer-card {
   background: #fff;
   border-radius: 14px;
-  border: 1.5px solid rgba(39, 72, 63, 0.18);
+  border: 1.5px solid rgba(9, 85, 139, 0.18);
   overflow: hidden;
-  box-shadow: 0 14px 28px rgba(25, 55, 48, 0.08);
+  box-shadow: 0 14px 28px rgba(9, 85, 139, 0.08);
   text-align: left;
   flex: 0 0
     calc(
@@ -2588,7 +2588,7 @@ main {
 .offer-card:hover {
   transform: translateY(-10px) scale(1.01);
   border-color: #f26f3f;
-  box-shadow: 0 22px 34px rgba(25, 55, 48, 0.16);
+  box-shadow: 0 22px 34px rgba(9, 85, 139, 0.16);
 }
 
 .offer-media {
@@ -2617,14 +2617,14 @@ main {
   line-height: 1.05;
   letter-spacing: -0.01em;
   font-weight: 700;
-  color: #27483f;
+  color: #002e4f;
 }
 
 .offer-sub {
   margin: 4px 0 0;
   font-size: 0.82rem;
   line-height: 1.2;
-  color: rgba(39, 72, 63, 0.6);
+  color: rgba(0, 46, 79, 0.6);
   font-weight: 600;
 }
 
@@ -4277,4 +4277,276 @@ main {
   letter-spacing: 0;
 }
 
+/* --- Offer Page Styles --- */
+.offer-page {
+  font-family: "Lato", sans-serif;
+  background-color: #fcfcfc;
+}
 
+.offer-details {
+  padding-top: 0px;
+}
+
+.offer-hero {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  position: relative;
+  border-bottom: 5px solid #09558b;
+}
+
+.offer-hero-img {
+  width: 100%;
+  height: 600px;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.offer-content-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.offer-header-center {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.offer-badge-pill {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 800;
+  font-size: 0.9rem;
+  border: 1px solid #bae6fd;
+  margin-bottom: 20px;
+}
+
+.offer-headline-huge {
+  color: #f26f3f;
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1;
+  margin: 0 0 10px 0;
+}
+
+.offer-subtitle-text {
+  color: #002e4f;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 30px 0;
+}
+
+.offer-timer {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.timer-box {
+  background: #f26f3f;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 70px;
+  box-shadow: 0 4px 10px rgba(242, 111, 63, 0.3);
+}
+
+.timer-num {
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.timer-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+.offer-tags {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.offer-tag {
+  border: 1.5px solid #f26f3f;
+  color: #f26f3f;
+  border-radius: 999px;
+  padding: 5px 15px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.offer-body-left {
+  text-align: left;
+}
+
+.offer-section-block {
+  margin-bottom: 40px;
+}
+
+.offer-section-title {
+  color: #002e4f;
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+
+.offer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.offer-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 12px;
+  color: #4a5568;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.offer-list li::before {
+  content: "•";
+  color: #09558b;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  font-size: 1.2rem;
+}
+
+.offer-cta-box {
+  border: 2px solid rgba(9, 85, 139, 0.2);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  background: white;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(9, 85, 139, 0.05);
+}
+
+.cta-box-title {
+  color: #002e4f;
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin: 0 0 10px 0;
+}
+
+.cta-box-sub {
+  color: #718096;
+  font-size: 1rem;
+  margin: 0 auto 25px auto;
+  max-width: 500px;
+}
+
+.cta-box-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.cta-btn-solid {
+  background: #f26f3f;
+  color: white;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 800;
+  transition: transform 0.2s;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+
+.cta-btn-solid:hover {
+  transform: translateY(-2px);
+  background: #e05d2e;
+}
+
+.cta-btn-outline {
+  background: transparent;
+  color: #f26f3f;
+  border: 2px solid #f26f3f;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 800;
+  transition: all 0.2s;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.cta-btn-outline:hover {
+  background: #f26f3f;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.offer-review-card {
+  background: #f0f7f9;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+}
+
+.review-stars {
+  color: #f6ad55;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.review-text {
+  color: #002e4f;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  margin: 0 0 15px 0;
+}
+
+.review-author {
+  color: #718096;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .offer-hero-img {
+    height: 250px;
+  }
+  .cta-box-buttons {
+    flex-direction: column;
+  }
+  .timer-box {
+    min-width: 60px;
+    padding: 8px 10px;
+  }
+  .timer-num {
+    font-size: 1.4rem;
+  }
+}
+
+/* --- Transformation card person row alignment --- */
+.transformation-person-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.transformation-person-row .transformation-person {
+  margin: 0;
+  flex: 1;
+}

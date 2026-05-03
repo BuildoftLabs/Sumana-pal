@@ -209,7 +209,10 @@ export default function Transformations({ data }) {
                 </div>
 
                 <div className="transformation-body">
-                  <p className="transformation-person">{c.person}</p>
+                  <div className="transformation-person-row">
+                    <p className="transformation-person">{c.person}</p>
+                    <div className="transformation-tag">{c.tag}</div>
+                  </div>
 
                   <div className="transformation-chips" aria-label="Result highlights">
                     {c.chips.map((chip, chipIndex) => (
@@ -218,8 +221,6 @@ export default function Transformations({ data }) {
                       </span>
                     ))}
                   </div>
-
-                  <div className="transformation-tag">{c.tag}</div>
 
                   <p className="transformation-quote">{c.quote}</p>
                 </div>

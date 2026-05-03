@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "../firebase";
 import { useInView } from "../hooks/useInView";
+import { buildWhatsAppHref } from "../components/WhatsAppFab";
 
 function getVisibleCount() {
   if (typeof window === "undefined") return 3;
@@ -40,8 +41,8 @@ export default function Offers({ data }) {
             imageAlt: item.headline,
             imageUrl: item.image || "/offer-card.png",
             badge: item.badge || null,
-            primaryCta: { label: "Grab This Offer", href: `#grab-offer-${doc.id}` },
-            secondaryCta: { label: "Know More", href: `#offer-${doc.id}` }
+            primaryCta: { label: "Grab This Offer", href: buildWhatsAppHref(`Hi! I want to avail this offer: ${item.badge ? item.badge + ' - ' : ''}${item.headline}`) },
+            secondaryCta: { label: "Know More", href: `/offers/${doc.id}` }
           };
         }).filter(Boolean);
         if (fetchedCards.length > 0) setCards(fetchedCards);
@@ -182,7 +183,7 @@ export default function Offers({ data }) {
                   <p className="offer-sub">{card.subtitle}</p>
 
                   <div className="offer-actions">
-                    <a className="offer-btn offer-btn-primary" href={card.primaryCta.href}>
+                    <a className="offer-btn offer-btn-primary" href={card.primaryCta.href} target="_blank" rel="noreferrer">
                       {card.primaryCta.label}
                     </a>
                     <a className="offer-btn offer-btn-outline" href={card.secondaryCta.href}>
