@@ -51,6 +51,32 @@ const HARDCODED_SERVICES = {
   },
 };
 
+// ── Mobile Accordion Item ───────────────────────────────────────────────────
+function AccordionItem({ title, children, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="spacc-item">
+      <button
+        className={`spacc-btn${open ? " spacc-btn-open" : ""}`}
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+      >
+        <span className="spacc-label">{title}</span>
+        <span className="spacc-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="18 15 12 9 6 15" />
+          </svg>
+        </span>
+      </button>
+      {open && (
+        <div className="spacc-panel">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ServicePage() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -71,7 +97,6 @@ export default function ServicePage() {
           return docSlug === slug || doc.id === slug;
         });
 
-        // Merge Firestore data with hardcoded fallback
         const hardcoded = HARDCODED_SERVICES[slug] || {};
         if (matched) {
           const data = matched.data();
@@ -88,14 +113,12 @@ export default function ServicePage() {
             results: data.results?.length ? data.results : (hardcoded.results || []),
           });
         } else if (hardcoded.title) {
-          // Firestore doc not found but we have hardcoded data
           setService({ ...hardcoded, image: "/service-hero.jpg" });
         } else {
           setService(null);
         }
       } catch (err) {
         console.error("Failed to load service:", err);
-        // Fall back to hardcoded if Firestore fails
         const hardcoded = HARDCODED_SERVICES[slug];
         if (hardcoded) {
           setService({ ...hardcoded, image: "/service-hero.jpg" });
@@ -106,18 +129,16 @@ export default function ServicePage() {
         setLoading(false);
       }
     }
-
     if (slug) loadService();
   }, [slug]);
 
-
   const sections = [
-    { id: "plan-description", label: "Plan Description" },
-    { id: "what-is", label: `What is ${service?.badge || "This"}?` },
-    { id: "symptoms", label: "Common Symptoms" },
-    { id: "who-is", label: "Who is This For?" },
-    { id: "what-you-get", label: "What You'll Get in This Service:" },
-    { id: "results", label: "Results You Can Expect:" },
+    { id: "sp-plan", label: "Plan Description" },
+    { id: "sp-what-is", label: `What is ${service?.badge || "This"}?` },
+    { id: "sp-symptoms", label: "Common Symptoms" },
+    { id: "sp-who", label: "Who is This For?" },
+    { id: "sp-get", label: "What You'll Get in This Service:" },
+    { id: "sp-results", label: "Results You Can Expect:" },
   ];
 
   const scrollToSection = (id, idx) => {
@@ -161,87 +182,151 @@ export default function ServicePage() {
   const wpLink = buildWhatsAppHref(`Hi! I want to know more about your service: ${service.title}`);
 
   return (
-    <main className="service-page-wrapper">
+    <main className="spv2-page">
       <TopNav navItems={navItems} />
 
-      {/* Hero Image — full bleed */}
-      <div className="sp-hero">
-        <img src={service.image} alt={service.title} className="sp-hero-img" />
+      {/* ── DESKTOP LAYOUT ──────────────────────────────────────────── */}
+      <div className="sp-desktop">
+        {/* Hero Image — full bleed */}
+        <div className="sp-hero">
+          <img src={service.image} alt={service.title} className="sp-hero-img" />
+        </div>
+
+        {/* Two-column layout */}
+        <div className="sp-layout">
+          {/* LEFT — Sticky TOC */}
+          <aside className="sp-toc">
+            <h4 className="sp-toc-heading">CONTENT</h4>
+            <nav>
+              {sections.map((s, i) => (
+                <button
+                  key={s.id}
+                  className={`sp-toc-item${activeSection === i ? " sp-toc-active" : ""}`}
+                  onClick={() => scrollToSection(s.id, i)}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </nav>
+          </aside>
+
+          {/* RIGHT — Scrollable content */}
+          <div className="sp-content" ref={contentRef}>
+            <span className="sp-badge">{service.badge}</span>
+
+            <h1 className="sp-title" id="sp-plan">{service.title}</h1>
+            <p className="sp-desc">{service.description}</p>
+
+            {service.whatIs && (
+              <>
+                <h2 className="sp-section-title" id="sp-what-is">What is {service.badge}?</h2>
+                <p className="sp-body-text">{service.whatIs}</p>
+              </>
+            )}
+
+            {service.symptoms?.length > 0 && (
+              <>
+                <h2 className="sp-section-title" id="sp-symptoms">Common Symptoms</h2>
+                <ul className="sp-list">
+                  {service.symptoms.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </>
+            )}
+
+            {service.whoIsThisFor?.length > 0 && (
+              <>
+                <h2 className="sp-section-title" id="sp-who">Who is This For?</h2>
+                <ul className="sp-list">
+                  {service.whoIsThisFor.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </>
+            )}
+
+            {service.whatYouGet?.length > 0 && (
+              <>
+                <h2 className="sp-section-title" id="sp-get">What You'll Get in This Service?</h2>
+                <ul className="sp-list">
+                  {service.whatYouGet.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </>
+            )}
+
+            {service.results?.length > 0 && (
+              <>
+                <h2 className="sp-section-title" id="sp-results">Results You Can Expect</h2>
+                <ul className="sp-list">
+                  {service.results.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </>
+            )}
+
+            {/* CTA Box */}
+            <div className="sp-cta-box">
+              <h3 className="sp-cta-title">Get Your Personalized Plan Now</h3>
+              <p className="sp-cta-sub">Start with a free 15-minute chat — no commitment, no pressure.</p>
+              <a href={wpLink} target="_blank" rel="noreferrer" className="sp-cta-btn">
+                Start My Transformation Now
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Two-column layout */}
-      <div className="sp-layout">
-        {/* LEFT — Sticky TOC */}
-        <aside className="sp-toc">
-          <h4 className="sp-toc-heading">CONTENT</h4>
-          <nav>
-            {sections.map((s, i) => (
-              <button
-                key={s.id}
-                className={`sp-toc-item${activeSection === i ? " sp-toc-active" : ""}`}
-                onClick={() => scrollToSection(s.id, i)}
-              >
-                {s.label}
-              </button>
-            ))}
-          </nav>
-        </aside>
+      {/* ── MOBILE LAYOUT ───────────────────────────────────────────── */}
+      <div className="sp-mobile">
+        <div className="spv2-hero">
+          <img src={service.image} alt={service.title} className="spv2-hero-img" />
+        </div>
 
-        {/* RIGHT — Scrollable content */}
-        <div className="sp-content" ref={contentRef}>
-          <span className="sp-badge">{service.badge}</span>
+        <div className="spv2-body">
+          <div className="spv2-header">
+            <span className="spv2-badge">{service.badge}</span>
+            <h1 className="spv2-title">{service.title}</h1>
+            <p className="spv2-desc">{service.description}</p>
+          </div>
 
-          <h1 className="sp-title" id="plan-description">{service.title}</h1>
-          <p className="sp-desc">{service.description}</p>
+          <div className="spv2-accordion">
+            {service.whatIs && (
+              <AccordionItem title={`What is ${service.badge}`} defaultOpen={true}>
+                <p className="spacc-text">{service.whatIs}</p>
+              </AccordionItem>
+            )}
+            {service.symptoms?.length > 0 && (
+              <AccordionItem title="Common Symptoms">
+                <ul className="spacc-list">
+                  {service.symptoms.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </AccordionItem>
+            )}
+            {service.whoIsThisFor?.length > 0 && (
+              <AccordionItem title="Who is This For?">
+                <ul className="spacc-list">
+                  {service.whoIsThisFor.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </AccordionItem>
+            )}
+            {service.whatYouGet?.length > 0 && (
+              <AccordionItem title="What You'll Get in This Service?">
+                <ul className="spacc-list">
+                  {service.whatYouGet.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </AccordionItem>
+            )}
+            {service.results?.length > 0 && (
+              <AccordionItem title="Result You Can Expect">
+                <ul className="spacc-list">
+                  {service.results.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </AccordionItem>
+            )}
+          </div>
 
-          {service.whatIs && (
-            <>
-              <h2 className="sp-section-title" id="what-is">What is {service.badge}?</h2>
-              <p className="sp-body-text">{service.whatIs}</p>
-            </>
-          )}
-
-          {service.symptoms?.length > 0 && (
-            <>
-              <h2 className="sp-section-title" id="symptoms">Common Symptoms</h2>
-              <ul className="sp-list">
-                {service.symptoms.map((s, i) => <li key={i}>{s}</li>)}
-              </ul>
-            </>
-          )}
-
-          {service.whoIsThisFor?.length > 0 && (
-            <>
-              <h2 className="sp-section-title" id="who-is">Who is This For?</h2>
-              <ul className="sp-list">
-                {service.whoIsThisFor.map((s, i) => <li key={i}>{s}</li>)}
-              </ul>
-            </>
-          )}
-
-          {service.whatYouGet?.length > 0 && (
-            <>
-              <h2 className="sp-section-title" id="what-you-get">What You'll Get in This Service?</h2>
-              <ul className="sp-list">
-                {service.whatYouGet.map((s, i) => <li key={i}>{s}</li>)}
-              </ul>
-            </>
-          )}
-
-          {service.results?.length > 0 && (
-            <>
-              <h2 className="sp-section-title" id="results">Results You Can Expect</h2>
-              <ul className="sp-list">
-                {service.results.map((s, i) => <li key={i}>{s}</li>)}
-              </ul>
-            </>
-          )}
-
-          {/* CTA Box */}
-          <div className="sp-cta-box">
-            <h3 className="sp-cta-title">Get Your Personalized Plan Now</h3>
-            <p className="sp-cta-sub">Start with a free 15-minute chat — no commitment, no pressure.</p>
-            <a href={wpLink} target="_blank" rel="noreferrer" className="sp-cta-btn">
+          <div className="spv2-cta">
+            <div className="spv2-cta-text">
+              <h3 className="spv2-cta-title">Get Your Personalized Plan Now</h3>
+              <p className="spv2-cta-sub">Start with a free 15-minute chat — no commitment, no pressure.</p>
+            </div>
+            <a href={wpLink} target="_blank" rel="noreferrer" className="spv2-cta-btn">
               Start My Transformation Now
             </a>
           </div>

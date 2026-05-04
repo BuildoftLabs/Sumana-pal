@@ -172,7 +172,7 @@ body.is-loader-active {
   width: 0;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #f26f3f 0%, #f6a94d 50%, #7ed0df 100%);
+  background: linear-gradient(90deg, #09558b 0%, #1a7fbf 50%, #7ed0df 100%);
   animation: loader-progress 2.1s ease forwards;
 }
 
@@ -1160,12 +1160,33 @@ main {
 
 .testimonials-grid {
   margin: clamp(26px, 4vw, 44px) auto 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(14px, 2vw, 22px);
+  display: flex;
+  gap: clamp(16px, 2.5vw, 28px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 10px 4px 30px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #09558b rgba(9, 85, 139, 0.1);
+}
+
+.testimonials-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.testimonials-grid::-webkit-scrollbar-track {
+  background: rgba(9, 85, 139, 0.05);
+  border-radius: 10px;
+}
+
+.testimonials-grid::-webkit-scrollbar-thumb {
+  background: #09558b;
+  border-radius: 10px;
 }
 
 .testimonial-card {
+  flex: 0 0 clamp(320px, 30vw, 400px);
+  scroll-snap-align: center;
   border-radius: 12px;
   border: 1.5px solid rgba(9, 85, 139, 0.15);
   background: #fff;
@@ -1781,8 +1802,11 @@ main {
   }
 
   .testimonials-grid {
-    grid-template-columns: 1fr;
-    max-width: 560px;
+    max-width: none;
+  }
+
+  .testimonial-card {
+    flex: 0 0 320px;
   }
 
   .transformations-carousel {
@@ -1999,6 +2023,19 @@ main {
     border-radius: 12px;
   }
 
+  /* Strong left overlay on mobile for text readability */
+  .hero-overlay {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 46, 79, 0.96) 0%,
+        rgba(0, 46, 79, 0.85) 45%,
+        rgba(0, 46, 79, 0.35) 72%,
+        rgba(0, 46, 79, 0) 100%
+      ),
+      linear-gradient(0deg, rgba(0, 46, 79, 0.28), rgba(0, 46, 79, 0.06));
+  }
+
   .hero-image {
     position: absolute;
     inset: 0;
@@ -2117,13 +2154,7 @@ main {
 
   .testimonials-grid {
     margin-top: 22px;
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding: 0 8px 6px;
+    padding: 0 8px 12px;
   }
 
   .testimonials-grid::-webkit-scrollbar {
@@ -2135,7 +2166,7 @@ main {
   }
 
   .testimonial-card {
-    flex: 0 0 78%;
+    flex: 0 0 82%;
     min-height: 310px;
     padding: 16px 14px 18px;
     scroll-snap-align: center;
@@ -4310,6 +4341,455 @@ main {
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0;
+}
+
+/* --- Service Page v2 (Accordion Layout) --- */
+.spv2-page {
+  font-family: "Lato", sans-serif;
+  background: #f5f7f6;
+  min-height: 100dvh;
+}
+
+.spv2-hero {
+  width: 100%;
+  max-height: 420px;
+  overflow: hidden;
+  background: #002e4f;
+}
+
+.spv2-hero-img {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.spv2-body {
+  width: min(640px, 100%);
+  margin: 0 auto;
+  padding: 28px 18px 80px;
+}
+
+/* Header: badge, title, desc */
+.spv2-header {
+  margin-bottom: 28px;
+}
+
+.spv2-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(9, 85, 139, 0.25);
+  background: linear-gradient(135deg, rgba(9, 85, 139, 0.05), rgba(9, 85, 139, 0.15));
+  color: #09558b;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  margin-bottom: 12px;
+}
+
+.spv2-title {
+  margin: 0 0 12px;
+  font-size: clamp(1.55rem, 4vw, 2.1rem);
+  font-weight: 900;
+  line-height: 1.12;
+  color: #002e4f;
+}
+
+.spv2-desc {
+  margin: 0;
+  font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+  line-height: 1.65;
+  color: rgba(0, 46, 79, 0.72);
+  font-weight: 600;
+}
+
+/* Accordion */
+.spv2-accordion {
+  display: grid;
+  gap: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1.5px solid rgba(9, 85, 139, 0.14);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(9, 85, 139, 0.07);
+  margin-bottom: 24px;
+}
+
+.spacc-item {
+  border-bottom: 1.5px solid rgba(9, 85, 139, 0.1);
+}
+
+.spacc-item:last-child {
+  border-bottom: none;
+}
+
+.spacc-btn {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 18px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: background 0.18s ease;
+}
+
+.spacc-btn:hover {
+  background: rgba(9, 85, 139, 0.03);
+}
+
+.spacc-btn-open {
+  background: rgba(9, 85, 139, 0.04);
+}
+
+.spacc-label {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #002e4f;
+  line-height: 1.3;
+}
+
+.spacc-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #09558b;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  transition: transform 0.25s ease;
+}
+
+.spacc-btn-open .spacc-icon {
+  transform: rotate(0deg);
+}
+
+.spacc-btn:not(.spacc-btn-open) .spacc-icon {
+  transform: rotate(180deg);
+}
+
+.spacc-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.spacc-panel {
+  padding: 4px 18px 18px;
+  animation: spacc-open 0.22s ease;
+}
+
+@keyframes spacc-open {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.spacc-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(0, 46, 79, 0.72);
+  font-weight: 600;
+}
+
+.spacc-list {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+}
+
+.spacc-list li {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: rgba(0, 46, 79, 0.75);
+  font-weight: 600;
+}
+
+/* CTA Box */
+.spv2-cta {
+  background: #fff;
+  border-radius: 16px;
+  border: 1.5px solid rgba(9, 85, 139, 0.15);
+  box-shadow: 0 8px 24px rgba(9, 85, 139, 0.08);
+  padding: 26px 22px 22px;
+  display: grid;
+  gap: 18px;
+}
+
+.spv2-cta-title {
+  margin: 0;
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
+  font-weight: 800;
+  color: #002e4f;
+  line-height: 1.2;
+}
+
+.spv2-cta-sub {
+  margin: 8px 0 0;
+  font-size: 0.92rem;
+  color: rgba(0, 46, 79, 0.6);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.spv2-cta-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 50px;
+  border-radius: 12px;
+  background: #f26f3f;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.spv2-cta-btn:hover {
+  background: #e16133;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 580px) {
+  .spv2-hero-img {
+    height: 280px;
+  }
+
+  .spv2-body {
+    padding: 22px 14px 70px;
+  }
+
+  .spacc-btn {
+    padding: 16px 14px;
+  }
+
+  .spacc-panel {
+    padding: 4px 14px 16px;
+  }
+
+  .spacc-label {
+    font-size: 0.98rem;
+  }
+}
+
+/* --- Service Page Desktop / Mobile visibility --- */
+.sp-desktop { display: block; }
+.sp-mobile  { display: none; }
+
+@media (max-width: 900px) {
+  .sp-desktop { display: none; }
+  .sp-mobile  { display: block; }
+}
+
+/* --- Service Page Desktop (two-column) --- */
+.sp-hero {
+  width: 100%;
+  max-height: 480px;
+  overflow: hidden;
+  background: #002e4f;
+}
+
+.sp-hero-img {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.sp-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 0;
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  align-items: start;
+}
+
+/* LEFT — Sticky TOC */
+.sp-toc {
+  position: sticky;
+  top: 100px;
+  padding: 28px 18px 28px 0;
+}
+
+.sp-toc-heading {
+  margin: 0 0 14px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #002e4f;
+  text-transform: uppercase;
+}
+
+.sp-toc-item {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 8px 10px;
+  text-align: left;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: rgba(0, 46, 79, 0.65);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.18s ease, color 0.18s ease;
+  line-height: 1.35;
+  margin-bottom: 2px;
+}
+
+.sp-toc-item:hover {
+  background: rgba(9, 85, 139, 0.07);
+  color: #002e4f;
+}
+
+.sp-toc-active {
+  color: #09558b !important;
+  font-weight: 900;
+}
+
+/* RIGHT — Scrollable content */
+.sp-content {
+  padding: 28px 0 0 36px;
+  border-left: 1.5px solid rgba(9, 85, 139, 0.1);
+  overflow-y: auto;
+  max-height: calc(100vh - 130px);
+  scrollbar-width: none;
+}
+
+.sp-content::-webkit-scrollbar { display: none; }
+
+.sp-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(9, 85, 139, 0.25);
+  background: linear-gradient(135deg, rgba(9, 85, 139, 0.05), rgba(9, 85, 139, 0.15));
+  color: #09558b;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  margin-bottom: 14px;
+}
+
+.sp-title {
+  margin: 0 0 10px;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: #002e4f;
+}
+
+.sp-desc {
+  margin: 0 0 8px;
+  font-size: 0.97rem;
+  line-height: 1.65;
+  color: rgba(0, 46, 79, 0.65);
+  font-weight: 600;
+  padding-bottom: 18px;
+  border-bottom: 1.5px solid rgba(9, 85, 139, 0.1);
+}
+
+.sp-section-title {
+  margin: 22px 0 10px;
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  font-weight: 900;
+  color: #002e4f;
+  line-height: 1.15;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid rgba(9, 85, 139, 0.1);
+}
+
+.sp-body-text {
+  margin: 0 0 8px;
+  font-size: 0.97rem;
+  line-height: 1.65;
+  color: rgba(0, 46, 79, 0.65);
+  font-weight: 600;
+}
+
+.sp-list {
+  margin: 0 0 8px;
+  padding-left: 22px;
+  display: grid;
+  gap: 7px;
+}
+
+.sp-list li {
+  font-size: 0.97rem;
+  line-height: 1.55;
+  color: rgba(0, 46, 79, 0.7);
+  font-weight: 600;
+}
+
+/* Desktop CTA Box */
+.sp-cta-box {
+  margin-top: 32px;
+  background: #fff;
+  border: 1.5px solid rgba(9, 85, 139, 0.15);
+  border-radius: 16px;
+  padding: 30px 28px 28px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(9, 85, 139, 0.08);
+}
+
+.sp-cta-title {
+  margin: 0;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  font-weight: 900;
+  color: #002e4f;
+  line-height: 1.2;
+}
+
+.sp-cta-sub {
+  margin: 10px auto 0;
+  font-size: 0.95rem;
+  color: rgba(0, 46, 79, 0.6);
+  font-weight: 600;
+  line-height: 1.5;
+  max-width: 460px;
+}
+
+.sp-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  min-height: 50px;
+  padding: 0 36px;
+  border-radius: 12px;
+  background: #f26f3f;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.sp-cta-btn:hover {
+  background: #e16133;
+  transform: translateY(-1px);
 }
 
 /* --- Offer Page Styles --- */
