@@ -1,4 +1,4 @@
-export const navItems = ["Home", "Services", "Testimonial", "Offers", "About me", "Blogs", "Contact"];
+export const navItems = ["Home", "Services", "Testimonial", "Offers", "Transformations", "About me", "Blogs", "FAQ", "Contact"];
 
 export const treatSection = {
   badge: "What I Treat",
@@ -314,7 +314,7 @@ export const transformationsSection = {
   cta: {
     title: "Ready to write your own story?",
     subtitle: "Start with a free 15-minute chat — no commitment, no pressure.",
-    primary: { label: "Start My Transformation", href: "https://wa.me/918013007962?text=Hi!%20I%20want%20to%20start%20my%20transformation%20journey.%20Please%20guide%20me." },
+    primary: { label: "Start My Transformation", href: "https://wa.me/919804380329?text=Hi!%20I%20want%20to%20start%20my%20transformation%20journey.%20Please%20guide%20me." },
     secondary: { label: "See More Results", href: "/transformations" }
   }
 };

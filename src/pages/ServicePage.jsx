@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../firebase";
 import { footerSection, navItems } from "../content/homeContent";
 import Footer from "../sections/Footer";
 import TopNav from "../sections/TopNav";
 import WhatsAppFab, { buildWhatsAppHref } from "../components/WhatsAppFab";
+import { useSEO } from "../hooks/useSEO";
 
 // ── Hardcoded fallback content per service slug ──────────────────────────────
 const HARDCODED_SERVICES = {
@@ -85,6 +86,37 @@ export default function ServicePage() {
   const contentRef = useRef(null);
   const [activeSection, setActiveSection] = useState(0);
 
+  // Auto-highlight active TOC item on scroll
+  useEffect(() => {
+    const panel = contentRef.current;
+    if (!panel || !sections.length) return;
+    const handleScroll = () => {
+      const panelTop = panel.getBoundingClientRect().top;
+      let current = 0;
+      sections.forEach((s, i) => {
+        const el = document.getElementById(s.id);
+        if (!el) return;
+        const elTop = el.getBoundingClientRect().top - panelTop;
+        if (elTop <= 60) current = i;
+      });
+      setActiveSection(current);
+    };
+    panel.addEventListener("scroll", handleScroll, { passive: true });
+    return () => panel.removeEventListener("scroll", handleScroll);
+  // sections changes when service loads, so re-attach
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [service]);
+
+  useSEO({
+    title: service
+      ? `${service.title} | Diet & Nutrition Services | Dietitian Sumana Pal Roy`
+      : "Diet & Nutrition Services | Dietitian Sumana Pal Roy",
+    description: service?.description
+      ? `${service.description.slice(0, 140)}…`
+      : "Expert diet and nutrition services by Dietitian Sumana Pal Roy in Kolkata. Personalized plans for weight loss, PCOS, thyroid, diabetes and more.",
+    canonical: `/services/${slug}`
+  });
+
   useEffect(() => {
     async function loadService() {
       setLoading(true);
@@ -106,6 +138,7 @@ export default function ServicePage() {
             badge: data.category || hardcoded.badge,
             description: data.description || hardcoded.description,
             image: data.image || "/service-hero.jpg",
+            descriptionBlocks: data.descriptionBlocks?.length ? data.descriptionBlocks : [],
             whatIs: data.whatIs || hardcoded.whatIs || "",
             symptoms: data.symptoms?.length ? data.symptoms : (hardcoded.symptoms || []),
             whoIsThisFor: data.whoIsThisFor?.length ? data.whoIsThisFor : (hardcoded.whoIsThisFor || []),
@@ -132,21 +165,35 @@ export default function ServicePage() {
     if (slug) loadService();
   }, [slug]);
 
-  const sections = [
-    { id: "sp-plan", label: "Plan Description" },
-    { id: "sp-what-is", label: `What is ${service?.badge || "This"}?` },
-    { id: "sp-symptoms", label: "Common Symptoms" },
-    { id: "sp-who", label: "Who is This For?" },
-    { id: "sp-get", label: "What You'll Get in This Service:" },
-    { id: "sp-results", label: "Results You Can Expect:" },
-  ];
+  // Build TOC: prefer descriptionBlocks headings, fall back to hardcoded sections
+  const sections = service?.descriptionBlocks?.length
+    ? [
+        { id: "sp-plan", label: "Overview" },
+        ...service.descriptionBlocks.map((b, i) => ({
+          id: `sp-block-${i}`,
+          label: b.heading || `Section ${i + 1}`,
+        }))
+      ]
+    : [
+        { id: "sp-plan", label: "Plan Description" },
+        { id: "sp-what-is", label: `What is ${service?.badge || "This"}?` },
+        { id: "sp-symptoms", label: "Common Symptoms" },
+        { id: "sp-who", label: "Who is This For?" },
+        { id: "sp-get", label: "What You'll Get in This Service:" },
+        { id: "sp-results", label: "Results You Can Expect:" },
+      ];
 
   const scrollToSection = (id, idx) => {
+    const panel = contentRef.current;
+    if (!panel) return;
     const el = document.getElementById(id);
-    if (el && contentRef.current) {
-      contentRef.current.scrollTo({ top: el.offsetTop - 24, behavior: "smooth" });
-      setActiveSection(idx);
-    }
+    if (!el) return;
+    // Calculate offset relative to the scrollable panel
+    const panelTop = panel.getBoundingClientRect().top;
+    const elTop = el.getBoundingClientRect().top;
+    const relativeOffset = elTop - panelTop + panel.scrollTop - 24;
+    panel.scrollTo({ top: relativeOffset, behavior: "smooth" });
+    setActiveSection(idx);
   };
 
   if (loading) {
@@ -217,48 +264,92 @@ export default function ServicePage() {
             <h1 className="sp-title" id="sp-plan">{service.title}</h1>
             <p className="sp-desc">{service.description}</p>
 
-            {service.whatIs && (
+            {/* ── descriptionBlocks from Firestore (primary content) ── */}
+            {service.descriptionBlocks?.length > 0 ? (
+              service.descriptionBlocks.map((block, i) => (
+                <div key={block.id || i} id={`sp-block-${i}`} className="sp-rich-block">
+                  {block.heading && <h2 className="sp-section-title">{block.heading}</h2>}
+                  <div className="sp-rich-html" dangerouslySetInnerHTML={{ __html: block.html }} />
+                </div>
+              ))
+            ) : (
+              /* ── Fallback: hardcoded fields ── */
               <>
-                <h2 className="sp-section-title" id="sp-what-is">What is {service.badge}?</h2>
-                <p className="sp-body-text">{service.whatIs}</p>
+                {service.whatIs && (
+                  <>
+                    <h2 className="sp-section-title" id="sp-what-is">What is {service.badge}?</h2>
+                    <p className="sp-body-text">{service.whatIs}</p>
+                  </>
+                )}
+
+                {service.symptoms?.length > 0 && (
+                  <>
+                    <h2 className="sp-section-title" id="sp-symptoms">Common Symptoms</h2>
+                    <ul className="sp-list">
+                      {service.symptoms.map((s, i) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </>
+                )}
+
+                {service.whoIsThisFor?.length > 0 && (
+                  <>
+                    <h2 className="sp-section-title" id="sp-who">Who is This For?</h2>
+                    <ul className="sp-list">
+                      {service.whoIsThisFor.map((s, i) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </>
+                )}
+
+                {service.whatYouGet?.length > 0 && (
+                  <>
+                    <h2 className="sp-section-title" id="sp-get">What You'll Get in This Service?</h2>
+                    <ul className="sp-list">
+                      {service.whatYouGet.map((s, i) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </>
+                )}
+
+                {service.results?.length > 0 && (
+                  <>
+                    <h2 className="sp-section-title" id="sp-results">Results You Can Expect</h2>
+                    <ul className="sp-list">
+                      {service.results.map((s, i) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </>
+                )}
               </>
             )}
 
-            {service.symptoms?.length > 0 && (
-              <>
-                <h2 className="sp-section-title" id="sp-symptoms">Common Symptoms</h2>
-                <ul className="sp-list">
-                  {service.symptoms.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </>
-            )}
-
-            {service.whoIsThisFor?.length > 0 && (
-              <>
-                <h2 className="sp-section-title" id="sp-who">Who is This For?</h2>
-                <ul className="sp-list">
-                  {service.whoIsThisFor.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </>
-            )}
-
-            {service.whatYouGet?.length > 0 && (
-              <>
-                <h2 className="sp-section-title" id="sp-get">What You'll Get in This Service?</h2>
-                <ul className="sp-list">
-                  {service.whatYouGet.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </>
-            )}
-
-            {service.results?.length > 0 && (
-              <>
-                <h2 className="sp-section-title" id="sp-results">Results You Can Expect</h2>
-                <ul className="sp-list">
-                  {service.results.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </>
-            )}
+            {/* Service JSON-LD */}
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@graph": [
+                  {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.dietwithsumana.com/" },
+                      { "@type": "ListItem", "position": 2, "name": "Services", "item": "https://www.dietwithsumana.com/services" },
+                      { "@type": "ListItem", "position": 3, "name": service.badge, "item": `https://www.dietwithsumana.com/services/${slug}` }
+                    ]
+                  },
+                  {
+                    "@type": "Service",
+                    "name": service.title,
+                    "description": service.description,
+                    "url": `https://www.dietwithsumana.com/services/${slug}`,
+                    "provider": {
+                      "@type": "LocalBusiness",
+                      "name": "Dietitian Sumana Pal Roy",
+                      "url": "https://www.dietwithsumana.com/",
+                      "telephone": "+919804380329",
+                      "address": { "@type": "PostalAddress", "addressLocality": "Kolkata", "addressCountry": "IN" }
+                    }
+                  }
+                ]
+              }) }}
+            />
 
             {/* CTA Box */}
             <div className="sp-cta-box">
@@ -267,6 +358,7 @@ export default function ServicePage() {
               <a href={wpLink} target="_blank" rel="noreferrer" className="sp-cta-btn">
                 Start My Transformation Now
               </a>
+              <Link to="/contact" className="sp-cta-secondary">Book a Free Consultation Call</Link>
             </div>
           </div>
         </div>
@@ -286,38 +378,50 @@ export default function ServicePage() {
           </div>
 
           <div className="spv2-accordion">
-            {service.whatIs && (
-              <AccordionItem title={`What is ${service.badge}`} defaultOpen={true}>
-                <p className="spacc-text">{service.whatIs}</p>
-              </AccordionItem>
-            )}
-            {service.symptoms?.length > 0 && (
-              <AccordionItem title="Common Symptoms">
-                <ul className="spacc-list">
-                  {service.symptoms.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </AccordionItem>
-            )}
-            {service.whoIsThisFor?.length > 0 && (
-              <AccordionItem title="Who is This For?">
-                <ul className="spacc-list">
-                  {service.whoIsThisFor.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </AccordionItem>
-            )}
-            {service.whatYouGet?.length > 0 && (
-              <AccordionItem title="What You'll Get in This Service?">
-                <ul className="spacc-list">
-                  {service.whatYouGet.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </AccordionItem>
-            )}
-            {service.results?.length > 0 && (
-              <AccordionItem title="Result You Can Expect">
-                <ul className="spacc-list">
-                  {service.results.map((s, i) => <li key={i}>{s}</li>)}
-                </ul>
-              </AccordionItem>
+            {/* ── descriptionBlocks from Firestore (primary) ── */}
+            {service.descriptionBlocks?.length > 0 ? (
+              service.descriptionBlocks.map((block, i) => (
+                <AccordionItem key={block.id || i} title={block.heading || `Section ${i + 1}`} defaultOpen={i === 0}>
+                  <div className="spacc-rich" dangerouslySetInnerHTML={{ __html: block.html }} />
+                </AccordionItem>
+              ))
+            ) : (
+              /* ── Fallback: hardcoded fields ── */
+              <>
+                {service.whatIs && (
+                  <AccordionItem title={`What is ${service.badge}`} defaultOpen={true}>
+                    <p className="spacc-text">{service.whatIs}</p>
+                  </AccordionItem>
+                )}
+                {service.symptoms?.length > 0 && (
+                  <AccordionItem title="Common Symptoms">
+                    <ul className="spacc-list">
+                      {service.symptoms.map((s, i) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </AccordionItem>
+                )}
+                {service.whoIsThisFor?.length > 0 && (
+                  <AccordionItem title="Who is This For?">
+                    <ul className="spacc-list">
+                      {service.whoIsThisFor.map((s, i) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </AccordionItem>
+                )}
+                {service.whatYouGet?.length > 0 && (
+                  <AccordionItem title="What You'll Get in This Service?">
+                    <ul className="spacc-list">
+                      {service.whatYouGet.map((s, i) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </AccordionItem>
+                )}
+                {service.results?.length > 0 && (
+                  <AccordionItem title="Result You Can Expect">
+                    <ul className="spacc-list">
+                      {service.results.map((s, i) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </AccordionItem>
+                )}
+              </>
             )}
           </div>
 

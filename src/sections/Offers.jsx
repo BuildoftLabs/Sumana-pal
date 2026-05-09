@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "../firebase";
 import { useInView } from "../hooks/useInView";
@@ -194,6 +195,10 @@ export default function Offers({ data }) {
               </article>
             ))}
           </div>
+        </div>
+
+        <div className="offers-view-all-wrap">
+          <Link className="offers-view-all-btn" to="/all-offers">View All Offers →</Link>
         </div>
       </div>
     </section>

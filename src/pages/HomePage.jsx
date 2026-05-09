@@ -27,8 +27,17 @@ import Transformations from "../sections/Transformations";
 import Treat from "../sections/Treat";
 import WhatsAppFab from "../components/WhatsAppFab";
 import { buildWhatsAppHref } from "../components/WhatsAppFab";
+import { useSEO } from "../hooks/useSEO";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function HomePage({ scrollToSection = null }) {
+  useSEO({
+    title: "Dietitian Sumana Pal Roy | Best Dietitian & Nutritionist in Kolkata",
+    description: "Get personalized diet and nutrition consultation from Dietitian Sumana Pal Roy. Expert guidance for weight loss, PCOS, thyroid, diabetes, and healthy lifestyle management in Kolkata and online.",
+    canonical: "/"
+  });
+
   const [loaderStage, setLoaderStage] = useState("visible");
   const [isLeadPopupOpen, setIsLeadPopupOpen] = useState(false);
   const leadNameId = useId();
@@ -78,18 +87,42 @@ export default function HomePage({ scrollToSection = null }) {
     return () => window.clearTimeout(popupTimer);
   }, [loaderStage]);
 
-  const handleLeadSubmit = (e) => {
+  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+
+  const handleLeadSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmittingLead(true);
 
-    const message = [
-      "Hi! I want a personalized diet plan.",
-      "",
-      `Name: ${leadName || "-"}`,
-      `Phone: ${leadPhone || "-"}`,
-      `Help: ${leadHelp || "-"}`
-    ].join("\n");
+    try {
+      await addDoc(collection(db, "leads"), {
+        name: leadName,
+        phone: leadPhone,
+        message: leadHelp,
+        formSource: "Popup Form",
+        status: "New",
+        createdAt: new Date().toISOString()
+      });
 
-    window.open(buildWhatsAppHref(message), "_blank", "noopener,noreferrer");
+      const message = [
+        "Hi! I want a personalized diet plan.",
+        "",
+        `Name: ${leadName || "-"}`,
+        `Phone: ${leadPhone || "-"}`,
+        `Help: ${leadHelp || "-"}`
+      ].join("\n");
+
+      window.open(buildWhatsAppHref(message), "_blank", "noopener,noreferrer");
+
+      setLeadName("");
+      setLeadPhone("");
+      setLeadHelp("");
+      setIsLeadPopupOpen(false);
+    } catch (error) {
+      console.error("Error saving lead: ", error);
+      alert("Failed to submit. Please try again.");
+    } finally {
+      setIsSubmittingLead(false);
+    }
   };
 
   return (
@@ -171,8 +204,8 @@ export default function HomePage({ scrollToSection = null }) {
                 />
               </label>
 
-              <button className="lead-popup-submit" type="submit">
-                Submit
+              <button className="lead-popup-submit" type="submit" disabled={isSubmittingLead}>
+                {isSubmittingLead ? "Submitting..." : "Submit"}
               </button>
             </form>
           </div>

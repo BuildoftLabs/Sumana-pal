@@ -1,6 +1,6 @@
 import React from "react";
 
-export const WHATSAPP_PHONE_E164_NO_PLUS = "918013007962";
+export const WHATSAPP_PHONE_E164_NO_PLUS = "919804380329";
 const DEFAULT_MESSAGE = "Hi! I want to enquire about your nutrition plans.";
 
 export function buildWhatsAppHref(message = DEFAULT_MESSAGE) {

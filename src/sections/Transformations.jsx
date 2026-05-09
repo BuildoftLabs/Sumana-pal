@@ -4,6 +4,62 @@ import { db } from "../firebase";
 import { useInView } from "../hooks/useInView";
 import { useNavigate } from "react-router-dom";
 
+const QUOTE_CHAR_LIMIT = 120;
+
+function TransformationCard({ c, idx }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = c.quote && c.quote.length > QUOTE_CHAR_LIMIT;
+  const displayQuote = isLong && !expanded
+    ? c.quote.slice(0, QUOTE_CHAR_LIMIT).trimEnd() + "..."
+    : c.quote;
+
+  return (
+    <article className="transformation-card" role="listitem" key={`${c.person}-${idx}`}>
+      <div className="transformation-media" aria-label="Before and after images">
+        <div
+          className="transformation-half"
+          style={c.beforeImageUrl ? { backgroundImage: `url(${c.beforeImageUrl})` } : undefined}
+        >
+          <span className="transformation-label">{c.beforeLabel}</span>
+        </div>
+        <div
+          className="transformation-half"
+          style={c.afterImageUrl ? { backgroundImage: `url(${c.afterImageUrl})` } : undefined}
+        >
+          <span className="transformation-label is-after">{c.afterLabel}</span>
+        </div>
+      </div>
+
+      <div className="transformation-body">
+        <div className="transformation-person-row">
+          <p className="transformation-person">{c.person}</p>
+          <div className="transformation-tag">{c.tag}</div>
+        </div>
+
+        <div className="transformation-chips" aria-label="Result highlights">
+          {c.chips.map((chip, chipIndex) => (
+            <span className={`chip${chipIndex === 0 ? " chip-filled" : ""}`} key={chip}>
+              {chip}
+            </span>
+          ))}
+        </div>
+
+        <p className="transformation-quote">{displayQuote}</p>
+        {isLong && (
+          <button
+            className="transformation-see-more"
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+          >
+            {expanded ? "See less" : "See more"}
+          </button>
+        )}
+      </div>
+    </article>
+  );
+}
+
+
 function getVisibleCount() {
   if (typeof window === "undefined") return 3;
   if (window.innerWidth <= 580) return 1.35;
@@ -192,39 +248,7 @@ export default function Transformations({ data }) {
             onPointerLeave={handlePointerLeave}
           >
             {filteredCards.map((c, idx) => (
-              <article className="transformation-card" role="listitem" key={`${c.person}-${idx}`}>
-                <div className="transformation-media" aria-label="Before and after images">
-                  <div
-                    className="transformation-half"
-                    style={c.beforeImageUrl ? { backgroundImage: `url(${c.beforeImageUrl})` } : undefined}
-                  >
-                    <span className="transformation-label">{c.beforeLabel}</span>
-                  </div>
-                  <div
-                    className="transformation-half"
-                    style={c.afterImageUrl ? { backgroundImage: `url(${c.afterImageUrl})` } : undefined}
-                  >
-                    <span className="transformation-label is-after">{c.afterLabel}</span>
-                  </div>
-                </div>
-
-                <div className="transformation-body">
-                  <div className="transformation-person-row">
-                    <p className="transformation-person">{c.person}</p>
-                    <div className="transformation-tag">{c.tag}</div>
-                  </div>
-
-                  <div className="transformation-chips" aria-label="Result highlights">
-                    {c.chips.map((chip, chipIndex) => (
-                      <span className={`chip${chipIndex === 0 ? " chip-filled" : ""}`} key={chip}>
-                        {chip}
-                      </span>
-                    ))}
-                  </div>
-
-                  <p className="transformation-quote">{c.quote}</p>
-                </div>
-              </article>
+              <TransformationCard key={`${c.person}-${idx}`} c={c} idx={idx} />
             ))}
           </div>
         </div>

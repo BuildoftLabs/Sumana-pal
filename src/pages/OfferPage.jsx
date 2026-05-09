@@ -6,12 +6,21 @@ import { footerSection, navItems } from "../content/homeContent";
 import Footer from "../sections/Footer";
 import TopNav from "../sections/TopNav";
 import WhatsAppFab, { buildWhatsAppHref } from "../components/WhatsAppFab";
+import { useSEO } from "../hooks/useSEO";
 
 export default function OfferPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [offer, setOffer] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  useSEO({
+    title: offer ? `${offer.headline} | Nutrition Offers | Dietitian Sumana Pal Roy` : "Nutrition Packages & Offers | Dietitian Sumana Pal Roy",
+    description: offer?.description
+      ? `${offer.description.slice(0, 150)}`
+      : "Limited-time diet consultation offers and nutrition packages by Dietitian Sumana Pal Roy, Kolkata. Book now for personalized plans.",
+    canonical: `/offers/${id}`
+  });
 
   // Countdown timer state (Mocking 3 days from now)
   const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 14, mins: 23, secs: 9 });

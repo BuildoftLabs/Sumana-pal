@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import { footerSection, navItems } from "../content/homeContent";
 import Footer from "../sections/Footer";
 import TopNav from "../sections/TopNav";
 import WhatsAppFab from "../components/WhatsAppFab";
+import { useSEO } from "../hooks/useSEO";
 
 export default function BlogPostPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Dynamic SEO for this blog post
+  useSEO({
+    title: post ? `${post.title} | Dietitian Sumana Pal Roy` : "Blog | Dietitian Sumana Pal Roy",
+    description: post?.subheading ?? "Read expert nutrition and diet advice by Dietitian Sumana Pal Roy, Kolkata.",
+    canonical: `/blogs/${slug}`,
+    ogImage: post?.imageUrl ?? undefined,
+    ogType: "article"
+  });
 
   useEffect(() => {
     async function loadPost() {
@@ -119,6 +129,44 @@ export default function BlogPostPage() {
 
           <div className="blogpost-body">
             <p>{post.content}</p>
+          </div>
+
+          {/* Article JSON-LD */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "BreadcrumbList",
+                  "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.dietwithsumana.com/" },
+                    { "@type": "ListItem", "position": 2, "name": "Blogs", "item": "https://www.dietwithsumana.com/blogs" },
+                    { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://www.dietwithsumana.com/blogs/${slug}` }
+                  ]
+                },
+                {
+                  "@type": "Article",
+                  "headline": post.title,
+                  "description": post.subheading,
+                  "image": post.imageUrl,
+                  "author": { "@type": "Person", "name": "Sumana Pal Roy", "url": "https://www.dietwithsumana.com/about" },
+                  "publisher": { "@type": "Organization", "name": "Dietitian Sumana Pal Roy", "url": "https://www.dietwithsumana.com/" },
+                  "datePublished": post.date,
+                  "url": `https://www.dietwithsumana.com/blogs/${slug}`,
+                  "mainEntityOfPage": `https://www.dietwithsumana.com/blogs/${slug}`
+                }
+              ]
+            }) }}
+          />
+
+          {/* Internal linking CTA */}
+          <div className="blogpost-cta-bar">
+            <p className="blogpost-cta-text">Want a personalized plan tailored to your goals?</p>
+            <div className="blogpost-cta-links">
+              <Link className="blogpost-cta-btn" to="/contact">Book a Free Consultation</Link>
+              <Link className="blogpost-cta-link" to="/services">View All Services →</Link>
+            </div>
           </div>
         </div>
       </section>

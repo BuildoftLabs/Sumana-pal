@@ -6,8 +6,15 @@ import { blogSection, footerSection, navItems } from "../content/homeContent";
 import Footer from "../sections/Footer";
 import TopNav from "../sections/TopNav";
 import WhatsAppFab from "../components/WhatsAppFab";
+import { useSEO } from "../hooks/useSEO";
 
 export default function BlogsPage() {
+  useSEO({
+    title: "Health & Nutrition Blogs | Dietitian Sumana Pal Roy",
+    description: "Read expert articles on weight loss, PCOS diet, thyroid management, diabetes nutrition, and healthy Indian meal plans by Dietitian Sumana Pal Roy, Kolkata.",
+    canonical: "/blogs"
+  });
+
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("All");
   const [blogs, setBlogs] = useState([]);
@@ -62,7 +69,7 @@ export default function BlogsPage() {
         <div className="blogs-inner">
           <p className="blogs-badge">{blogSection.badge}</p>
           <h1 className="blogs-title">
-            Straight answers. <span className="blogs-title-accent">Zero fluff.</span>
+            Health, Nutrition &amp; Wellness <span className="blogs-title-accent">Blogs</span>
           </h1>
           <p className="blogs-desc">{blogSection.description}</p>
 

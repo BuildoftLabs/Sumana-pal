@@ -280,6 +280,10 @@ export default function Services({ data }) {
           />
           <span className="services-progress-thumb" aria-hidden="true" style={{ left: `${progressWidth}%` }} />
         </div>
+
+        <div className="services-view-all-wrap">
+          <Link className="services-view-all-btn" to="/all-services">View All Services →</Link>
+        </div>
       </div>
     </section>
   );
