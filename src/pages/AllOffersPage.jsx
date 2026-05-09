@@ -8,6 +8,10 @@ import Footer from "../sections/Footer";
 import WhatsAppFab, { buildWhatsAppHref } from "../components/WhatsAppFab";
 import { useSEO } from "../hooks/useSEO";
 
+function toSlug(str) {
+  return (str || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
 export default function AllOffersPage() {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +38,7 @@ export default function AllOffersPage() {
             imageAlt: item.headline,
             badge: item.badge || null,
             primaryCta: { label: "Grab This Offer", href: buildWhatsAppHref(`Hi! I want to avail this offer: ${item.badge ? item.badge + " - " : ""}${item.headline}`) },
-            secondaryCta: { label: "Know More", href: `/offers/${doc.id}` }
+            secondaryCta: { label: "Know More", href: `/offers/${toSlug(item.headline) || doc.id}` }
           };
         }).filter(Boolean);
         setOffers(fetched);

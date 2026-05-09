@@ -12,8 +12,14 @@ function getVisibleCount() {
   return 3;
 }
 
+function toSlug(str) {
+  return (str || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
 export default function Offers({ data }) {
-  const stripLoopItems = [...data.stripItems, ...data.stripItems];
+  const [tickerItems, setTickerItems] = useState(
+    [...data.stripItems, ...data.stripItems].map(text => ({ emoji: "◆", description: text }))
+  );
   const [cards, setCards] = useState(data.cards);
   const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -43,7 +49,8 @@ export default function Offers({ data }) {
             imageUrl: item.image || "/offer-card.png",
             badge: item.badge || null,
             primaryCta: { label: "Grab This Offer", href: buildWhatsAppHref(`Hi! I want to avail this offer: ${item.badge ? item.badge + ' - ' : ''}${item.headline}`) },
-            secondaryCta: { label: "Know More", href: `/offers/${doc.id}` }
+            secondaryCta: { label: "Know More", href: `/offers/${toSlug(item.headline) || doc.id}` },
+            docId: doc.id
           };
         }).filter(Boolean);
         if (fetchedCards.length > 0) setCards(fetchedCards);
@@ -51,7 +58,23 @@ export default function Offers({ data }) {
         console.error("Failed to fetch offers", err);
       }
     }
+
+    async function loadTicker() {
+      try {
+        const q = query(collection(db, "ticker"), orderBy("order", "asc"));
+        const snap = await getDocs(q);
+        const fetched = snap.docs.map(doc => doc.data()).filter(item => item.isActive);
+        if (fetched.length > 0) {
+          // Duplicate items to ensure smooth infinite scrolling
+          setTickerItems([...fetched, ...fetched, ...fetched, ...fetched]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch ticker items", err);
+      }
+    }
+
     loadOffers();
+    loadTicker();
   }, []);
 
   const maxIndex = Math.max(Math.ceil(cards.length - visibleCount), 0);
@@ -126,12 +149,12 @@ export default function Offers({ data }) {
       <div className="offers-strip" aria-label="Offer highlights">
         <div className="offers-strip-inner">
           <div className="offers-strip-track">
-            {stripLoopItems.map((item, idx) => (
-              <span className="offers-strip-item" key={`${item}-${idx}`}>
-                <span className="offers-diamond" aria-hidden="true">
-                  ◆
+            {tickerItems.map((item, idx) => (
+              <span className="offers-strip-item" key={`${item.description}-${idx}`}>
+                <span className="offers-diamond" aria-hidden="true" style={{ fontSize: '1.2em', marginRight: '8px' }}>
+                  {item.emoji || "◆"}
                 </span>
-                {item}
+                {item.description}
               </span>
             ))}
           </div>

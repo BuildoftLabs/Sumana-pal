@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "../firebase";
 import { footerSection, navItems } from "../content/homeContent";
 import Footer from "../sections/Footer";
 import TopNav from "../sections/TopNav";
 import WhatsAppFab, { buildWhatsAppHref } from "../components/WhatsAppFab";
 import { useSEO } from "../hooks/useSEO";
+
+function toSlug(str) {
+  return (str || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
 
 export default function OfferPage() {
   const { id } = useParams();
@@ -29,30 +33,45 @@ export default function OfferPage() {
     async function loadOffer() {
       setLoading(true);
       try {
-        const docRef = doc(db, "offers", id);
-        const docSnap = await getDoc(docRef);
-        
-        if (docSnap.exists()) {
-          const data = docSnap.data();
+        // First: try fetching by slug match (headline → slug)
+        const q = query(collection(db, "offers"), orderBy("order", "asc"));
+        const snap = await getDocs(q);
+        const matched = snap.docs.find(d => toSlug(d.data().headline) === id);
+
+        let data, docId;
+        if (matched) {
+          data = matched.data();
+          docId = matched.id;
+        } else {
+          // Fallback: try direct doc ID lookup (old links)
+          const docRef = doc(db, "offers", id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            data = docSnap.data();
+            docId = docSnap.id;
+          }
+        }
+
+        if (data) {
           setOffer({
-            id: docSnap.id,
+            id: docId,
             headline: data.headline,
             description: data.description,
             badge: data.badge || "Limited Time Offer",
             image: data.image || "https://res.cloudinary.com/dcogunzot/image/upload/v1714574932/Navratri_offer_banner_zldvj8.png",
-            whatsIncluded: data.whatsIncluded || [
-              "1-on-1 personalized coaching sessions : Weekly calls tailored to your goals",
-              "Custom action plan & roadmap : Personalized to your specific situation",
-              "WhatsApp support between sessions : Quick answers when you need them most",
-              "Access to resource library & templates : Worksheets, trackers & exclusive guides"
-            ],
-            terms: data.terms || [
-              "Offer valid for a limited time only. Limited slots available.",
-              "Discount applies to the first month's payment only. Standard pricing from month 2.",
-              "Non-transferable and cannot be combined with other offers.",
-              "A minimum 1-month commitment is required to book under this offer.",
-              "Refund policy: 100% refund within 48 hours of first session if not satisfied."
-            ]
+            descriptionBlocks: data.descriptionBlocks || [],
+            timerEnabled: Boolean(data.timerEnabled),
+            timerTarget: data.timerTarget || "",
+            // Testimonial
+            clientSayEnabled: Boolean(data.clientSayEnabled),
+            clientSayStars: Number(data.clientSayStars) || 5,
+            clientSayText: data.clientSayText || "",
+            clientSayName: data.clientSayName || "",
+            clientSayAge: data.clientSayAge || "",
+            clientSayGender: data.clientSayGender || "",
+            // Terms
+            termsEnabled: Boolean(data.termsEnabled),
+            termsText: data.termsText || "",
           });
         } else {
           setOffer(null);
@@ -64,33 +83,27 @@ export default function OfferPage() {
         setLoading(false);
       }
     }
-    
+
     if (id) {
       loadOffer();
     }
   }, [id]);
 
+  // Real countdown from timerTarget
   useEffect(() => {
-    if (!offer) return;
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        let { days, hours, mins, secs } = prev;
-        if (secs > 0) secs--;
-        else {
-          secs = 59;
-          if (mins > 0) mins--;
-          else {
-            mins = 59;
-            if (hours > 0) hours--;
-            else {
-              hours = 23;
-              if (days > 0) days--;
-            }
-          }
-        }
-        return { days, hours, mins, secs };
-      });
-    }, 1000);
+    if (!offer?.timerEnabled || !offer?.timerTarget) return;
+
+    function getTimeLeft() {
+      const diff = Math.max(0, new Date(offer.timerTarget) - Date.now());
+      const days  = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins  = Math.floor((diff % 3600000)  / 60000);
+      const secs  = Math.floor((diff % 60000)    / 1000);
+      return { days, hours, mins, secs };
+    }
+
+    setTimeLeft(getTimeLeft());
+    const timer = setInterval(() => setTimeLeft(getTimeLeft()), 1000);
     return () => clearInterval(timer);
   }, [offer]);
 
@@ -144,25 +157,27 @@ export default function OfferPage() {
             <h1 className="offer-headline-huge">{offer.headline}</h1>
             <p className="offer-subtitle-text">{offer.description}</p>
             
-            {/* Timer */}
-            <div className="offer-timer">
-              <div className="timer-box">
-                <span className="timer-num">{String(timeLeft.days).padStart(2, '0')}</span>
-                <span className="timer-label">DAYS</span>
+            {/* Timer — only shown when enabled in admin */}
+            {offer.timerEnabled && offer.timerTarget && (
+              <div className="offer-timer">
+                <div className="timer-box">
+                  <span className="timer-num">{String(timeLeft.days).padStart(2, '0')}</span>
+                  <span className="timer-label">DAYS</span>
+                </div>
+                <div className="timer-box">
+                  <span className="timer-num">{String(timeLeft.hours).padStart(2, '0')}</span>
+                  <span className="timer-label">Hours</span>
+                </div>
+                <div className="timer-box">
+                  <span className="timer-num">{String(timeLeft.mins).padStart(2, '0')}</span>
+                  <span className="timer-label">Mins</span>
+                </div>
+                <div className="timer-box">
+                  <span className="timer-num">{String(timeLeft.secs).padStart(2, '0')}</span>
+                  <span className="timer-label">Sec</span>
+                </div>
               </div>
-              <div className="timer-box">
-                <span className="timer-num">{String(timeLeft.hours).padStart(2, '0')}</span>
-                <span className="timer-label">Hours</span>
-              </div>
-              <div className="timer-box">
-                <span className="timer-num">{String(timeLeft.mins).padStart(2, '0')}</span>
-                <span className="timer-label">Mins</span>
-              </div>
-              <div className="timer-box">
-                <span className="timer-num">{String(timeLeft.secs).padStart(2, '0')}</span>
-                <span className="timer-label">Sec</span>
-              </div>
-            </div>
+            )}
 
             {/* Tags */}
             <div className="offer-tags">
@@ -173,15 +188,19 @@ export default function OfferPage() {
           </div>
 
           <div className="offer-body-left">
-            {/* What's included */}
-            <div className="offer-section-block">
-              <h2 className="offer-section-title">What's included?</h2>
-              <ul className="offer-list">
-                {offer.whatsIncluded.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-            </div>
+            {/* descriptionBlocks from Firebase (primary) */}
+            {offer.descriptionBlocks?.length > 0 ? (
+              offer.descriptionBlocks.map((block, i) => (
+                <div key={block.id || i} className="offer-section-block">
+                  {block.heading && <h2 className="offer-section-title">{block.heading}</h2>}
+                  <div className="offer-rich-html" dangerouslySetInnerHTML={{ __html: block.html }} />
+                </div>
+              ))
+            ) : (
+              <div className="offer-section-block">
+                <p style={{ color: "rgba(39,72,63,0.55)", fontStyle: "italic" }}>No detailed content added yet.</p>
+              </div>
+            )}
 
             {/* CTA Box */}
             <div className="offer-cta-box">
@@ -193,30 +212,39 @@ export default function OfferPage() {
               </div>
             </div>
 
-            {/* Reviews (Mocked for now as per design) */}
-            <div className="offer-section-block">
-              <h2 className="offer-section-title">What clients say</h2>
-              <div className="offer-review-card">
-                <div className="review-stars">★★★★★</div>
-                <p className="review-text">"The personalised attention completely changed my approach. I achieved more in 4 weeks than I had in 6 months on my own."</p>
-                <span className="review-author">- Shreya Jha, 21 F</span>
+            {/* What clients say — only shown when enabled & data exists */}
+            {offer.clientSayEnabled && offer.clientSayText && (
+              <div className="offer-section-block">
+                <h2 className="offer-section-title">What clients say</h2>
+                <div className="offer-review-card">
+                  <div className="review-stars">
+                    {Array.from({ length: offer.clientSayStars }).map((_, i) => (
+                      <span key={i}>★</span>
+                    ))}
+                    {Array.from({ length: 5 - offer.clientSayStars }).map((_, i) => (
+                      <span key={i} style={{ opacity: 0.3 }}>★</span>
+                    ))}
+                  </div>
+                  <p className="review-text">"{offer.clientSayText}"</p>
+                  <span className="review-author">
+                    - {offer.clientSayName}
+                    {(offer.clientSayAge || offer.clientSayGender) && (
+                      <>, {offer.clientSayAge}{offer.clientSayAge && offer.clientSayGender ? " " : ""}{offer.clientSayGender?.[0]}</>
+                    )}
+                  </span>
+                </div>
               </div>
-              <div className="offer-review-card">
-                <div className="review-stars">★★★★★</div>
-                <p className="review-text">"The personalised attention completely changed my approach. I achieved more in 4 weeks than I had in 6 months on my own."</p>
-                <span className="review-author">- Saptarshi Ghosh, 21 M</span>
-              </div>
-            </div>
+            )}
 
-            {/* Terms and conditions */}
-            <div className="offer-section-block">
-              <h2 className="offer-section-title">Terms & conditions</h2>
-              <ul className="offer-list">
-                {offer.terms.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-            </div>
+            {/* Terms & Conditions — only shown when enabled & text exists */}
+            {offer.termsEnabled && offer.termsText && (
+              <div className="offer-section-block">
+                <h2 className="offer-section-title">Terms &amp; Conditions</h2>
+                <div className="offer-terms-text" style={{ whiteSpace: "pre-line", lineHeight: 1.8, color: "rgba(39,72,63,0.8)", fontSize: "0.95rem" }}>
+                  {offer.termsText}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

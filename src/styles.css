@@ -5623,3 +5623,15 @@ main {
   color: #f26f3f;
   text-decoration: underline;
 }
+
+/* ===== Offer page rich HTML blocks ===== */
+.offer-rich-html {
+  font-size: 0.95rem;
+  color: #3b4a43;
+  line-height: 1.75;
+}
+.offer-rich-html p { margin: 0 0 10px; }
+.offer-rich-html ul, .offer-rich-html ol { padding-left: 20px; margin: 0 0 10px; }
+.offer-rich-html li { margin-bottom: 4px; }
+.offer-rich-html strong { color: #27483f; font-weight: 700; }
+.offer-rich-html a { color: #f26f3f; text-decoration: underline; }
