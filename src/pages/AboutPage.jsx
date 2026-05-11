@@ -55,13 +55,25 @@ export default function AboutPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Use Firestore data if available, otherwise fall back to static defaults
-  const heroImage   = aboutData?.image       || "/about.png";
-  const headline    = aboutData?.headline    || "About Dietitian Sumana Pal Roy";
-  const description = aboutData?.description || "";
-  const blocks      = Array.isArray(aboutData?.descriptionBlocks)
+  // Only use Firestore data — no hardcoded fallbacks for text
+  const heroImage      = aboutData?.image || "/about.png";
+  const headlineRaw    = aboutData?.headline || "";
+  const description    = aboutData?.description || "";
+  const blocks         = Array.isArray(aboutData?.descriptionBlocks)
     ? aboutData.descriptionBlocks
     : [];
+
+  // Auto-split headline: first half black, second half orange
+  function splitHeadline(text) {
+    if (!text) return { black: "", orange: "" };
+    const words = text.trim().split(" ");
+    const mid   = Math.ceil(words.length / 2);
+    return {
+      black:  words.slice(0, mid).join(" "),
+      orange: words.slice(mid).join(" "),
+    };
+  }
+  const { black: headlineBlack, orange: headlineOrange } = splitHeadline(headlineRaw);
 
   return (
     <>
@@ -86,77 +98,59 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ── Headline + Short Description ───────────────── */}
-        <section className="about-section about-section-white" aria-label="About me content">
-          <div className="about-hero-inner">
-            <div className="about-hero-copy">
-              <h1 className="about-title">
-                {headline}
-                {!aboutData?.headline && (
-                  <>
-                    <br />
-                    <span className="about-title-accent">Certified Dietitian &amp; Nutritionist in Kolkata</span>
-                  </>
+        {/* ── Headline + Short Description — only if data exists in Firestore ── */}
+        {(headlineRaw || description) && (
+          <section className="about-section about-section-white" aria-label="About me content">
+            <div className="about-hero-inner">
+              <div className="about-hero-copy">
+                {headlineRaw && (
+                  <h1 className="about-title">
+                    <span>{headlineBlack}</span>
+                    {headlineOrange && (
+                      <> <span className="about-title-accent">{headlineOrange}</span></>
+                    )}
+                  </h1>
                 )}
-              </h1>
-              {description && <p className="about-lead">{description}</p>}
+                {description && <p className="about-lead">{description}</p>}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ── Dynamic Description Blocks from Admin ─────── */}
         {!loading && blocks.length > 0 ? (
-          blocks.map((block, i) => (
-            <section
-              key={block.id || i}
-              className={`about-section ${i % 2 === 0 ? "about-section-cream" : "about-section-white"}`}
-              aria-label={block.heading || `Section ${i + 1}`}
-            >
-              <div className="about-hero-inner">
-                <div className="about-split-block">
-                  {block.heading && (
-                    <h2 className="about-split-title">{block.heading}</h2>
-                  )}
-                  {block.html && (
-                    <div
-                      className="about-split-text"
-                      dangerouslySetInnerHTML={{ __html: block.html }}
-                    />
-                  )}
+          blocks.map((block, i) => {
+            const { black: hBlack, orange: hOrange } = splitHeadline(block.heading || "");
+            return (
+              <section
+                key={block.id || i}
+                className={`about-section ${i % 2 === 0 ? "about-section-white" : "about-section-cream"}`}
+                aria-label={block.heading || `Section ${i + 1}`}
+              >
+                <div className="about-hero-inner">
+                  <div className="about-split-block">
+                    {block.heading && (
+                      <h2 className="about-split-title">
+                        <span>{hBlack}</span>
+                        {hOrange && (
+                          <> <span className="about-split-accent">{hOrange}</span></>
+                        )}
+                      </h2>
+                    )}
+                    {block.html && (
+                      <div
+                        className="about-split-text"
+                        dangerouslySetInnerHTML={{ __html: block.html }}
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            </section>
-          ))
-        ) : !loading && (
-          // Fallback shown only when Firestore has no blocks yet
-          <>
-            <section className="about-section about-section-cream" aria-label="Awards and Recognition">
-              <div className="about-hero-inner">
-                <div className="about-split-block">
-                  <h2 className="about-split-title">
-                    Awards <span className="about-split-accent">&amp; Recognition</span>
-                  </h2>
-                  <p className="about-split-text">
-                    Content coming soon — add description blocks from the admin panel.
-                  </p>
-                </div>
-              </div>
-            </section>
+              </section>
+            );
+          })
+        ) : null}
 
-            <section className="about-section about-section-white" aria-label="Education and Training">
-              <div className="about-hero-inner">
-                <div className="about-split-block">
-                  <h2 className="about-split-title">
-                    Education <span className="about-split-accent">&amp; Training</span>
-                  </h2>
-                  <p className="about-split-text">
-                    Content coming soon — add description blocks from the admin panel.
-                  </p>
-                </div>
-              </div>
-            </section>
-          </>
-        )}
+
 
         <WhatsAppFab message="Hi! I want to enquire about your nutrition plans." />
       </main>

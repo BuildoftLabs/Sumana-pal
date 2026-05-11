@@ -527,6 +527,10 @@ export const footerSection = {
     tagline: "Dietitian • Personalized nutrition plans"
   },
   links: {
+    facebook: {
+      label: "Facebook",
+      href: "https://www.facebook.com/profile.php?id=61565000045983"
+    },
     instagram: {
       label: "Instagram",
       href: "https://www.instagram.com/dietitian_sumana.pal?igsh=YjVreThqaTE4bGhw"

@@ -2,6 +2,19 @@ import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 
+/** Extract YouTube video ID from any YouTube URL */
+function getYouTubeId(url) {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    if (u.hostname === "youtu.be") return u.pathname.slice(1);
+    if (u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2];
+    return u.searchParams.get("v");
+  } catch {
+    return null;
+  }
+}
+
 export default function Testimonials({ data }) {
   const [testimonials, setTestimonials] = useState(data.testimonials);
   const [rating, setRating] = useState(data.rating);
@@ -17,6 +30,7 @@ export default function Testimonials({ data }) {
             name: item.name,
             stars: item.stars || 5,
             text: item.review,
+            ytVideo: item.ytVideo || null,
             avatar: { initials: item.name ? item.name[0] : "?", color: "var(--accent)", imageUrl: item.image || null }
           };
         });
@@ -59,6 +73,40 @@ export default function Testimonials({ data }) {
 
         <div className="testimonials-grid" role="list" aria-label="Customer testimonials">
           {testimonials.map((t, idx) => {
+            const ytId = getYouTubeId(t.ytVideo);
+
+            // ── YouTube video card ──
+            if (ytId) {
+              const embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&modestbranding=1&rel=0&playsinline=1`;
+              return (
+                <article className="testimonial-card testimonial-yt-card" role="listitem" key={`${t.name}-${idx}`}>
+                  <div className="testimonial-yt-wrap">
+                    <iframe
+                      src={embedUrl}
+                      title={`${t.name} video testimonial`}
+                      frameBorder="0"
+                      allow="autoplay; encrypted-media"
+                      allowFullScreen
+                      className="testimonial-yt-iframe"
+                    />
+                    {/* Transparent overlay — captures tap/click → opens YT */}
+                    <a
+                      href={t.ytVideo}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="testimonial-yt-overlay"
+                      aria-label={`Watch ${t.name}'s video testimonial on YouTube`}
+                    />
+                  </div>
+                  <div className="testimonial-yt-footer">
+                    <span className="testimonial-name">{t.name}</span>
+                    <span className="testimonial-stars" aria-label={`${t.stars} stars`}>{"★".repeat(t.stars)}</span>
+                  </div>
+                </article>
+              );
+            }
+
+            // ── Regular text review card ──
             const CHAR_LIMIT = 320;
             const isLong = t.text && t.text.length > CHAR_LIMIT;
             const isExpanded = expandedCards[idx];
@@ -79,7 +127,6 @@ export default function Testimonials({ data }) {
                     </p>
                   </div>
                 </header>
-
                 <p className={`testimonial-text${isLong && !isExpanded ? " testimonial-text-collapsed" : ""}`}>
                   {t.text}
                 </p>
