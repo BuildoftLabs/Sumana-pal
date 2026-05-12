@@ -78,7 +78,7 @@ export default function TopNav({ navItems }) {
 
   return (
     <header className={`top-nav${isScrolled ? " is-scrolled" : ""}`} aria-label="Main navigation">
-      <Link className="brand" to="/" aria-label="Sumona Pal home">
+      <Link className="brand" to="/" aria-label="Dietitian Sumana Pal — Home">
         <span className="brand-small">DIETITIAN</span>
         <span className="brand-main">Sumana Pal Roy</span>
       </Link>
