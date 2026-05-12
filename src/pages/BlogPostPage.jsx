@@ -127,9 +127,12 @@ export default function BlogPostPage() {
             <span>{post.readTime}</span>
           </div>
 
-          <div className="blogpost-body">
-            <p>{post.content}</p>
-          </div>
+          <div
+            className="blogpost-body"
+            // Content comes from our own Firestore — admin-controlled, safe to render as HTML
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
 
           {/* Article JSON-LD */}
           <script

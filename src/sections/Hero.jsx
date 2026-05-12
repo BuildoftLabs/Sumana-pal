@@ -98,7 +98,7 @@ export default function Hero() {
             Know More <span aria-hidden="true">→</span>
           </a>
           <a className="btn btn-outline" href="#contact">
-            Contact Sumona <span aria-hidden="true">→</span>
+            Contact Sumana <span aria-hidden="true">→</span>
           </a>
         </div>
       </div>

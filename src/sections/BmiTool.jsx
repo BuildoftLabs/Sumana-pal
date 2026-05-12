@@ -6,6 +6,58 @@ function clampNumber(value, min, max) {
   return Math.min(max, Math.max(min, n));
 }
 
+// Personalized Sumana's note per BMI category
+const CATEGORY_NOTES = {
+  underweight: {
+    emoji: "💪",
+    note: "Being underweight can quietly impact your energy, immunity, and hormones. With the right nutrition plan, we can build you up safely and sustainably. Let's start.",
+  },
+  normal: {
+    emoji: "✅",
+    note: "Great news — your BMI is in a healthy range! But weight alone doesn't tell the full story. Let's make sure your nutrition is as balanced as your BMI.",
+  },
+  overweight: {
+    emoji: "🌟",
+    note: "A few extra kilos can sneak up on us — and that's okay. With a smart, personalised diet plan we can get you back to feeling light and energetic. Let's talk.",
+  },
+  obese: {
+    emoji: "❤️",
+    note: "I know this number can feel heavy — but it's a starting point, not a verdict. Thousands of people have reversed obesity with the right plan. You can too. Let's build yours.",
+  },
+  default: {
+    emoji: "🌿",
+    note: "Every body is different, and every plan should be too. Let me help you create a path that works specifically for you.",
+  },
+};
+
+function getCategoryKey(label) {
+  if (!label) return "default";
+  const l = label.toLowerCase();
+  if (l.includes("underweight")) return "underweight";
+  if (l.includes("normal") || l.includes("healthy")) return "normal";
+  if (l.includes("overweight") || l.includes("over weight")) return "overweight";
+  if (l.includes("obese") || l.includes("obesity")) return "obese";
+  return "default";
+}
+
+function buildWhatsAppMessage({ bmi, bmiCategory, gender, heightFt, heightIn, weightKg }) {
+  const catKey = getCategoryKey(bmiCategory);
+  const genderStr = gender === "female" ? "female" : "male";
+
+  const msgs = {
+    underweight: `Hi Sumana! I just used your BMI calculator and my BMI came out to *${bmi}*, which puts me in the *Underweight* category. I'm a ${genderStr}, ${heightFt}ft ${heightIn}in tall, weighing ${weightKg} kg. I'd love a personalised nutrition plan to reach a healthy weight. Can we connect? 🙏`,
+    normal: `Hi Sumana! My BMI is *${bmi}* (${bmiCategory}) — great to know I'm in a healthy range! I'm a ${genderStr}, ${heightFt}ft ${heightIn}in, ${weightKg} kg. I'd still love a personalised plan to maintain and optimise my health. Can we connect? 😊`,
+    overweight: `Hi Sumana! I calculated my BMI and it's *${bmi}*, which puts me in the *Overweight* category. I'm a ${genderStr}, ${heightFt}ft ${heightIn}in tall, weighing ${weightKg} kg. I really want to work on this and would love a personalised diet plan from you. Can we talk? 🙏`,
+    obese: `Hi Sumana! My BMI is *${bmi}*, which falls in the *${bmiCategory}* range. I'm a ${genderStr}, ${heightFt}ft ${heightIn}in tall, weighing ${weightKg} kg. I know I need to make a change and I'd like your expert help with a personalised plan. Looking forward to connecting! 🙏`,
+    default: `Hi Sumana! My BMI is *${bmi}* (${bmiCategory ?? "calculated"}). I'm a ${genderStr}, ${heightFt}ft ${heightIn}in, ${weightKg} kg. I'd love a personalised nutrition plan. Can we connect? 🙏`,
+  };
+
+  return encodeURIComponent(msgs[catKey] ?? msgs.default);
+}
+
+// ← Replace with Sumana's actual WhatsApp number (country code + number, no +)
+const WP_NUMBER = "919804380329";
+
 export default function BmiTool({ data }) {
   const [gender, setGender] = useState(data.gender.options?.[0]?.value ?? "male");
   const [heightFt, setHeightFt] = useState("");
@@ -72,6 +124,23 @@ export default function BmiTool({ data }) {
     if (r.max == null) return `>${r.min}`;
     return `${r.min} - ${r.max}`;
   };
+
+  // Derived: category info + personalized WhatsApp link
+  const catKey = getCategoryKey(bmiCategory);
+  const categoryInfo = CATEGORY_NOTES[catKey] ?? CATEGORY_NOTES.default;
+
+  const whatsappHref = useMemo(() => {
+    if (bmi == null) return `https://wa.me/${WP_NUMBER}`;
+    const msg = buildWhatsAppMessage({
+      bmi: bmi.toFixed(2),
+      bmiCategory,
+      gender,
+      heightFt: heightFt || "?",
+      heightIn: heightIn || "0",
+      weightKg: weightKg || "?",
+    });
+    return `https://wa.me/${WP_NUMBER}?text=${msg}`;
+  }, [bmi, bmiCategory, gender, heightFt, heightIn, weightKg]);
 
   return (
     <section className="bmi" id="bmi-calculator" aria-label="BMI calculator tool">
@@ -179,20 +248,37 @@ export default function BmiTool({ data }) {
 
                 <div className="bmi-highlight" aria-label="Your BMI status and note">
                   <div className="bmi-highlight-row">
-                    <p className="bmi-highlight-title">{bmiCategory ?? data.result?.emptyCategory ?? "--"}</p>
-                    <p className="bmi-highlight-range">{activeRange ? formatRange(activeRange) : "--"}</p>
+                    <p className="bmi-highlight-title">
+                      {bmiCategory ?? data.result?.emptyCategory ?? "--"}
+                    </p>
+                    <p className="bmi-highlight-range">
+                      {activeRange ? formatRange(activeRange) : "--"}
+                    </p>
                   </div>
-                  <p className="bmi-note-k">• Sumana&apos;s Note</p>
-                  <p className="bmi-note-text">
-                    I know this number can feel discouraging — but it&apos;s just a starting point, not a verdict. With the
-                    right plan, steady progress is absolutely possible. Let&apos;s talk.
+
+                  {/* Category-specific personalized note */}
+                  <p className="bmi-note-k">
+                    {categoryInfo.emoji} Sumana&apos;s Note
                   </p>
-                  <a className="bmi-cta" href={data.result?.cta?.href ?? "#book-call"}>
-                    {data.result?.cta?.label ?? "Get Your Personalized Plan"} <span aria-hidden="true">→</span>
+                  <p className="bmi-note-text">{categoryInfo.note}</p>
+
+                  {/* WhatsApp CTA with pre-filled personalized message */}
+                  <a
+                    className="bmi-cta"
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Get your personalized plan via WhatsApp"
+                  >
+                    {data.result?.cta?.label ?? "Get Your Personalized Plan"}{" "}
+                    <span aria-hidden="true">→</span>
                   </a>
                 </div>
 
-                <div className="bmi-range-list bmi-range-list-after" aria-label="BMI ranges after current category">
+                <div
+                  className="bmi-range-list bmi-range-list-after"
+                  aria-label="BMI ranges after current category"
+                >
                   {rangesAfterActive.map((r) => (
                     <div key={r.key} className="bmi-range-row">
                       <span>{r.label}</span>
@@ -223,4 +309,3 @@ export default function BmiTool({ data }) {
     </section>
   );
 }
-
