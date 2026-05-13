@@ -1,7 +1,4 @@
 User-agent: *
 Allow: /
 
-# Disallow admin or private paths (none currently, placeholder)
-# Disallow: /admin
-
-Sitemap: https://www.dietwithsumana.com/sitemap.xml
+Sitemap: https://dietitiansumana.com/sitemap.xml

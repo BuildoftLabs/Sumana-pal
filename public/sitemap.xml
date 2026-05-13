@@ -3,78 +3,92 @@
 
   <!-- Homepage -->
   <url>
-    <loc>https://www.dietwithsumana.com/</loc>
+    <loc>https://dietitiansumana.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- About -->
   <url>
-    <loc>https://www.dietwithsumana.com/about</loc>
+    <loc>https://dietitiansumana.com/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Services section (scroll alias — still indexable) -->
+  <!-- Services section -->
   <url>
-    <loc>https://www.dietwithsumana.com/services</loc>
+    <loc>https://dietitiansumana.com/services</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Service detail pages -->
   <url>
-    <loc>https://www.dietwithsumana.com/services/weight-loss</loc>
+    <loc>https://dietitiansumana.com/services/weight-loss</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.dietwithsumana.com/services/pcod-treatment</loc>
+    <loc>https://dietitiansumana.com/services/pcod-treatment</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.dietwithsumana.com/services/thyroid-management</loc>
+    <loc>https://dietitiansumana.com/services/thyroid-management</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.dietwithsumana.com/services/diabetes-management</loc>
+    <loc>https://dietitiansumana.com/services/diabetes-management</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Blogs listing -->
   <url>
-    <loc>https://www.dietwithsumana.com/blogs</loc>
+    <loc>https://dietitiansumana.com/blogs</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Offers -->
   <url>
-    <loc>https://www.dietwithsumana.com/offers</loc>
+    <loc>https://dietitiansumana.com/offers</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- Testimonials -->
   <url>
-    <loc>https://www.dietwithsumana.com/testimonials</loc>
+    <loc>https://dietitiansumana.com/testimonials</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- Contact -->
   <url>
-    <loc>https://www.dietwithsumana.com/contact</loc>
+    <loc>https://dietitiansumana.com/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Transformations -->
   <url>
-    <loc>https://www.dietwithsumana.com/transformations</loc>
+    <loc>https://dietitiansumana.com/transformations</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- BMI Calculator -->
+  <url>
+    <loc>https://dietitiansumana.com/bmi-calculator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- FAQs -->
+  <url>
+    <loc>https://dietitiansumana.com/faqs</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
