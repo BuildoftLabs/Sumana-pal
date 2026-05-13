@@ -143,9 +143,9 @@ export default function BlogPostPage() {
                 {
                   "@type": "BreadcrumbList",
                   "itemListElement": [
-                    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.dietwithsumana.com/" },
-                    { "@type": "ListItem", "position": 2, "name": "Blogs", "item": "https://www.dietwithsumana.com/blogs" },
-                    { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://www.dietwithsumana.com/blogs/${slug}` }
+                    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dietitiansumana.com/" },
+                    { "@type": "ListItem", "position": 2, "name": "Blogs", "item": "https://dietitiansumana.com/blogs" },
+                    { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://dietitiansumana.com/blogs/${slug}` }
                   ]
                 },
                 {
@@ -153,11 +153,11 @@ export default function BlogPostPage() {
                   "headline": post.title,
                   "description": post.subheading,
                   "image": post.imageUrl,
-                  "author": { "@type": "Person", "name": "Sumana Pal Roy", "url": "https://www.dietwithsumana.com/about" },
-                  "publisher": { "@type": "Organization", "name": "Dietitian Sumana Pal Roy", "url": "https://www.dietwithsumana.com/" },
+                  "author": { "@type": "Person", "name": "Sumana Pal Roy", "url": "https://dietitiansumana.com/about" },
+                  "publisher": { "@type": "Organization", "name": "Dietitian Sumana Pal Roy", "url": "https://dietitiansumana.com/" },
                   "datePublished": post.date,
-                  "url": `https://www.dietwithsumana.com/blogs/${slug}`,
-                  "mainEntityOfPage": `https://www.dietwithsumana.com/blogs/${slug}`
+                  "url": `https://dietitiansumana.com/blogs/${slug}`,
+                  "mainEntityOfPage": `https://dietitiansumana.com/blogs/${slug}`
                 }
               ]
             }) }}

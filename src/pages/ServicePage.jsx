@@ -329,20 +329,20 @@ export default function ServicePage() {
                   {
                     "@type": "BreadcrumbList",
                     "itemListElement": [
-                      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.dietwithsumana.com/" },
-                      { "@type": "ListItem", "position": 2, "name": "Services", "item": "https://www.dietwithsumana.com/services" },
-                      { "@type": "ListItem", "position": 3, "name": service.badge, "item": `https://www.dietwithsumana.com/services/${slug}` }
+                      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dietitiansumana.com/" },
+                      { "@type": "ListItem", "position": 2, "name": "Services", "item": "https://dietitiansumana.com/services" },
+                      { "@type": "ListItem", "position": 3, "name": service.badge, "item": `https://dietitiansumana.com/services/${slug}` }
                     ]
                   },
                   {
                     "@type": "Service",
                     "name": service.title,
                     "description": service.description,
-                    "url": `https://www.dietwithsumana.com/services/${slug}`,
+                    "url": `https://dietitiansumana.com/services/${slug}`,
                     "provider": {
                       "@type": "LocalBusiness",
                       "name": "Dietitian Sumana Pal Roy",
-                      "url": "https://www.dietwithsumana.com/",
+                      "url": "https://dietitiansumana.com/",
                       "telephone": "+919804380329",
                       "address": { "@type": "PostalAddress", "addressLocality": "Kolkata", "addressCountry": "IN" }
                     }

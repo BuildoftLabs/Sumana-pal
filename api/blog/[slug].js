@@ -92,8 +92,8 @@ export default async function handler(req, res) {
   const pageTitle = `${title} | Dietitian Sumana Pal Roy`;
   const rawDesc = stripHtml(post.description || "Expert nutrition and diet advice by Dietitian Sumana Pal Roy, Kolkata.");
   const description = escapeHtml(rawDesc.slice(0, 160));
-  const imageUrl = escapeHtml(post.image || "https://www.dietwithsumana.com/hero-image.png");
-  const canonicalUrl = `https://www.dietwithsumana.com/blogs/${slug}`;
+  const imageUrl = escapeHtml(post.image || "https://dietitiansumana.com/hero-image.png");
+  const canonicalUrl = `https://dietitiansumana.com/blogs/${slug}`;
   const category = escapeHtml(post.category || "General");
   const dateStr = post.date
     ? new Date(post.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
@@ -117,8 +117,8 @@ export default async function handler(req, res) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://www.dietwithsumana.com/" },
-          { "@type": "ListItem", position: 2, name: "Blogs", item: "https://www.dietwithsumana.com/blogs" },
+          { "@type": "ListItem", position: 1, name: "Home", item: "https://dietitiansumana.com/" },
+          { "@type": "ListItem", position: 2, name: "Blogs", item: "https://dietitiansumana.com/blogs" },
           { "@type": "ListItem", position: 3, name: title, item: canonicalUrl },
         ],
       },
@@ -127,8 +127,8 @@ export default async function handler(req, res) {
         headline: title,
         description: description,
         image: imageUrl,
-        author: { "@type": "Person", name: "Sumana Pal Roy", url: "https://www.dietwithsumana.com/about" },
-        publisher: { "@type": "Organization", name: "Dietitian Sumana Pal Roy", url: "https://www.dietwithsumana.com/" },
+        author: { "@type": "Person", name: "Sumana Pal Roy", url: "https://dietitiansumana.com/about" },
+        publisher: { "@type": "Organization", name: "Dietitian Sumana Pal Roy", url: "https://dietitiansumana.com/" },
         datePublished: post.date || "",
         url: canonicalUrl,
         mainEntityOfPage: canonicalUrl,

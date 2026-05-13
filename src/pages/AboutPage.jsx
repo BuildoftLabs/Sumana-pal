@@ -12,16 +12,16 @@ const ABOUT_SCHEMA = {
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.dietwithsumana.com/" },
-        { "@type": "ListItem", "position": 2, "name": "About", "item": "https://www.dietwithsumana.com/about" }
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dietitiansumana.com/" },
+        { "@type": "ListItem", "position": 2, "name": "About", "item": "https://dietitiansumana.com/about" }
       ]
     },
     {
       "@type": "Person",
       "name": "Sumana Pal Roy",
       "jobTitle": "Certified Dietitian & Nutritionist",
-      "url": "https://www.dietwithsumana.com/about",
-      "image": "https://www.dietwithsumana.com/about.png",
+      "url": "https://dietitiansumana.com/about",
+      "image": "https://dietitiansumana.com/about.png",
       "telephone": "+919804380329",
       "email": "dietwithsumana@gmail.com",
       "address": {

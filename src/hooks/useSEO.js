@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const BASE_DOMAIN = "https://www.dietwithsumana.com";
+const BASE_DOMAIN = "https://dietitiansumana.com";
 
 /**
  * Dynamically sets per-page SEO metadata.
