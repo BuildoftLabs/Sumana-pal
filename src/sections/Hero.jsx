@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
-const heroTitles = ["Dietitian", "Nutritionist", "Diet Expert", "Nutritional Therapist"];
+const heroTitles = ["Dietitian", "Nutritionist", "Diet Expert", "Nutritional Therapist", "Weight Management"];
 
 // Only ONE local fallback — the main hero image
 const defaultHeroBanners = [

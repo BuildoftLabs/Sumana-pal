@@ -34,7 +34,7 @@ export default function Footer({ data }) {
               ✉️ dietwithsumana@gmail.com
             </a>
             <span className="new-footer-contact-address">
-              📍 Kolkata, West Bengal, India
+              📍 Chinsurah, Greater Kolkata, West Bengal 712101, India
             </span>
           </address>
 
